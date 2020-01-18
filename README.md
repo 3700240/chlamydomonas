@@ -14,6 +14,7 @@ A list gestion part, that makes the Chlamydomonas evolve, multiply, move and rea
 The graphic part, dealing with the inputs, allowing to move around the environment, and showing the cells.
 
 
+
 FR: Le programme a pour but la modélisation d'une population de Chlamydomonas Reinhardtii dans un milieu à niveau de stress faible à modéré.
 Il représente en 3 dimensions la façon des cellules de réagir et agréger ensemble.
 La modélisation se lance avec la touche 'a' et on avance dans le temps en appuyant sur espace.
