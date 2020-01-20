@@ -24,6 +24,8 @@ extern float angle_right_left;
 extern int camera_x;
 extern int camera_y;
 extern int camera_z;
+extern char is_tutorial;
+
 
 
 extern int prob_aggregation_between_cells; 

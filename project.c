@@ -52,7 +52,7 @@ int prob_die = 0;
 int prob_disaggregation = 1;
 int prob_max = 1000;
 
-int tutorial = 1;
+char is_tutorial = 1;
 
 void radius_min_max() 
 {

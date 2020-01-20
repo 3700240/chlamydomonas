@@ -27,6 +27,8 @@ void KeyboardManagement(unsigned char key, int x, int y)
 {
     switch (key) {
         case 'a': 
+            if (is_tutorial)
+                is_tutorial = 0;
             if (test_options == -1) {
                 pass = 0;
                 test_options = 0;
@@ -42,7 +44,10 @@ void KeyboardManagement(unsigned char key, int x, int y)
             else if (pass == 21) pass = 22;
             else pass = 0;
             break;
-        case 27: test_options = 1;
+        case 27:
+            if (is_tutorial)
+                is_tutorial = 0; 
+            test_options = 1;
             glutPostRedisplay();
         //Reset probas = init_stats();
             break;
@@ -770,8 +775,8 @@ void MouseManagement(int button, int state, int x, int y)
                             case 31: test_options = 100;
                                 glutPostRedisplay();
                                 break;
-                            case 130: //PROBS
-                                test_options = 400;
+                            case 130: //Patches per draw
+                                test_options = 200;
                                 glutPostRedisplay();
                                 break;
                             case 230: patches_per_draw = 3;
@@ -784,10 +789,11 @@ void MouseManagement(int button, int state, int x, int y)
                     }
                     else if ((0.5 * ymax - y)/(0.5 * min) > -0.333) {
                         switch (test_options) {
-                            case 41: test_options = 200;
+                            case 41: is_tutorial = 1;
                                 glutPostRedisplay();
                                 break;
-                            case 140: //OPTION 4
+                            case 140: //PROBS
+                            test_options = 400;
                                 glutPostRedisplay();
                                 break;
                             case 240: patches_per_draw = 4;
@@ -915,38 +921,10 @@ void init_menu()
     glutAddMenuEntry("1s", 3);
     glutAddMenuEntry("1.5s", 4);
     glutAddMenuEntry("2s", 5);
-
-    int id_color_aggrydomonas = glutCreateMenu(color_aggr_change);
-    glutAddMenuEntry("Red",1);
-    glutAddMenuEntry("Green",2);
-    glutAddMenuEntry("Blue",3);
-    glutAddMenuEntry("Cyan",4);
-    glutAddMenuEntry("Purple",5);
-    glutAddMenuEntry("Yellow",6);
-
-    int id_color_Aggregate = glutCreateMenu(color_aggregate_change);
-    glutAddMenuEntry("Red",1);
-    glutAddMenuEntry("Green",2);
-    glutAddMenuEntry("Blue",3);
-    glutAddMenuEntry("Cyan",4);
-    glutAddMenuEntry("Purple",5);
-    glutAddMenuEntry("Yellow",6);
-
-    int id_color = glutCreateMenu();
-    glutAddSubMenu("aggrydomonas", id_color_aggrydomonas);
-    glutAddSubMenu("Aggregates", id_color_Aggregate);
-
-    int id_change_options = glutCreateMenu();
-    glutAddSubMenu("Change speed", id_change_speed);
-    glutAddSubMenu("Number of patches before modelisation", id_numb_patches);
-    glutAddSubMenu("Color", id_color);
 */
     glutCreateMenu(menu_options);
     glutAddMenuEntry("End program", 1);
     glutAddMenuEntry("Start new experiment", 2);
     glutAddMenuEntry("Change parameters", 3);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
-
-/*    Change_options > COORDMIN COORDMAX EXACTITUDE_OU_RAYON*/ /*?*/ /*COLORS INIT_NUMBER PROBS&VALUES */
-
 }
