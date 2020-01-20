@@ -775,8 +775,8 @@ void MouseManagement(int button, int state, int x, int y)
                             case 31: test_options = 100;
                                 glutPostRedisplay();
                                 break;
-                            case 130: //Patches per draw
-                                test_options = 200;
+                            case 130: //PROBS
+                                test_options = 400;
                                 glutPostRedisplay();
                                 break;
                             case 230: patches_per_draw = 3;
@@ -792,8 +792,8 @@ void MouseManagement(int button, int state, int x, int y)
                             case 41: is_tutorial = 1;
                                 glutPostRedisplay();
                                 break;
-                            case 140: //PROBS
-                            test_options = 400;
+                            case 140: //Patches per draw
+                            test_options = 200;
                                 glutPostRedisplay();
                                 break;
                             case 240: patches_per_draw = 4;
@@ -826,7 +826,7 @@ void MouseManagement(int button, int state, int x, int y)
                         case 160: test_options = 1;
                             glutPostRedisplay();
                             break;
-                        case 260: test_options = 1;
+                        case 260: test_options = 100;
                             glutPostRedisplay();
                             break;
                         default: test_options = test_options - (test_options % 100) + (test_options % 10);
