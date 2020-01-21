@@ -37,7 +37,6 @@ void KeyboardManagement(unsigned char key, int x, int y)
             else if (!test_options) {
                 if (is_initiated) delete_world();
                 init_world();
-                printf("J'ai fini\n");
                 glutPostRedisplay();
             }
             if (!pass) pass = 25;

@@ -459,7 +459,7 @@ void print_aggregates(Aggregate *head)
     while (head != NULL) {
 		glPushMatrix();
         glTranslatef(head->center->x,head->center->y,head->center->z);
-        glutSolidSphere((head->radius * 2 * size) + size ,100,100);
+        glutSolidSphere((head->radius * 3 * size) + size ,30,30);
         head = head->next;
         glPopMatrix();
     }
@@ -876,7 +876,7 @@ void which_param(char option)
 
    	print_rgb(15.2, 40.865, "PROBS", 0.8, 0.8, 0.8);
     print_rgb(15.2, 30.6, "MODEL SIZE", 0.8, 0.8, 0.8);
-    print_rgb(15.2, 20.335, "EXPERIMENT DATA", 0.8, 0.8, 0.8);
+    print_rgb(15.2, 20.335, "EXPERIMENT DATA", 0.8, 0.8, 0.8); //ADD A FACTORY RESET //ADD A BACK BUTTON
     print_rgb(15.2, 10.13, "Back", 0.8, 0.8, 0.8);
 
     switch (option) {

@@ -26,10 +26,10 @@ float DIST_AGGREGATE = 1.0;
 int food_increase = 2;
 /* The food increase amount is how much energy eating gives minus the energy depleted per "round"*/
 int food_decrease = 1;
-float size = 0.05;
+float size = 0.075;
 int test_options = 0;
 int id_window = 0;
-int patches_per_draw = 1;
+int patches_per_draw = 10;
 int coord_maxima = 0;
 int coord_minima = 0;
 float radius = 0;
@@ -46,10 +46,10 @@ int prob_aggregation_between_cells = 45;
 int prob_self_aggregating = 200;
 int dimin_prob_clonage = 16; 
 int prob_init_clonage = 100;
-int prob_eat = 1000;
+int prob_eat = 900;
 int prob_change_direction = 100;
-int prob_die = 0;
-int prob_disaggregation = 1;
+int prob_die = 100;
+int prob_disaggregation = 10;
 int prob_max = 1000;
 
 char is_tutorial = 1;

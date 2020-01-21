@@ -201,7 +201,7 @@ Aggregate *adding_chlam_to_agg(Aggregate *head, Aggregate *aggreg, Chlamydomonas
 	/*------------------------------------------------------------------------
 	//
 	// adding_chlam_to_agg
-	// Adds a Chlamydomonas to an aggregate is our list (may create the aggregate in the meantime). Takes it off the Chlamydomonas list. Checks for the center of the aggregate
+	// Adds a Chlamydomonas to an aggregate in our list (may create the aggregate in the meantime). Takes it off the Chlamydomonas list. Checks for the center of the aggregate
 	//
 	// Takes as parameters the list of aggregates, the aggregate we want to insert our Chlamydomonas in, the 'ancestor' of the said Chlamydomonas
 	// Returns the completed list of aggregate with infos updated
@@ -215,30 +215,30 @@ Aggregate *adding_chlam_to_agg(Aggregate *head, Aggregate *aggreg, Chlamydomonas
 			delete_world();
 			return NULL;
 		}
-		aggreg->center = elem_prev->next;
-		aggreg->head = aggreg->center;
-		elem_prev->next = elem_prev->next->next;
-		aggreg->head->next = NULL;
-		numb_per_coord.numb_per_x[aggreg->center->x - XMIN] --;
-		numb_per_coord.numb_per_y[aggreg->center->y - YMIN] --;
-		numb_per_coord.numb_per_z[aggreg->center->z - ZMIN] --;
+		Chlamydomonas *temp = elem_prev->next;
+		aggreg->center = temp;
+		aggreg->head = temp;
+		elem_prev->next = temp->next;
+		temp->next = NULL;
+		numb_per_coord.numb_per_x[temp->x - XMIN] --;
+		numb_per_coord.numb_per_y[temp->y - YMIN] --;
+		numb_per_coord.numb_per_z[temp->z - ZMIN] --;
 		aggreg->number = 1;
 		aggreg->radius = 0;
 		return add_aggreg(head, aggreg);
-	}
-/*Creating an aggregate, adding it to the Aggregate list*/
+	} /*Creating an aggregate, adding it to the Aggregate list*/
+	Chlamydomonas *temp = elem_prev->next;
 	aggreg->number ++;
 	float radius = 0;
-	aggreg->center = find_center(aggreg->head, elem_prev->next, &radius);
+	aggreg->center = find_center(aggreg->head, temp, &radius);
 	aggreg->radius = radius/(aggreg->number);
 /*Finding the new center and radius*/
-	Chlamydomonas *temp = elem_prev->next;
 	elem_prev->next = temp->next;
 	temp->next = aggreg->head;
 	aggreg->head = temp;
-	numb_per_coord.numb_per_x[aggreg->head->x - XMIN] --;
-	numb_per_coord.numb_per_y[aggreg->head->y - YMIN] --;
-	numb_per_coord.numb_per_z[aggreg->head->z - ZMIN] --;
+	numb_per_coord.numb_per_x[temp->x - XMIN] --;
+	numb_per_coord.numb_per_y[temp->y - YMIN] --;
+	numb_per_coord.numb_per_z[temp->z - ZMIN] --;
 /*Adding the Chlamydomonas to the aggregate, taking it off the list
 That specific aggregate already is in our list, so all good*/
 	return head;
@@ -319,6 +319,7 @@ void exhaust(Chlamydomonas *elem_prev)
 		numb_per_coord.numb_per_z[temp->z - ZMIN] --;
 /*Those should allow us to make the distance check faster*/
 		free (temp);
+		return exhaust(elem_prev);
 	}
 } /*Checks the energy of the next Chlamydomonas in the list and takes it off if necessary
 The head of the list has to be checked manually though as it has no predecessor (or create a predecessor beforehand)*/
@@ -519,14 +520,19 @@ Aggregate *gathering(Aggregate *head, Chlamydomonas **head_Chlam, Chlamydomonas 
 	//
 	------------------------------------------------------------------------*/
 
+	if (elem_prev == NULL)
+		return head;
 	Chlamydomonas *elem = elem_prev->next;
 	if (elem == NULL)
 		return head;
 	if (head != NULL) {
 		Aggregate *temp_aggreg = head;
 		while (temp_aggreg != NULL) {
-			if (distance(temp_aggreg->center, elem) <= temp_aggreg->radius + DIST_AGGREGATE)
+			if (distance(temp_aggreg->center, elem) <= temp_aggreg->radius + DIST_AGGREGATE) {
+				if (elem == *head_Chlam) 
+					*head_Chlam = elem->next;
 				return adding_chlam_to_agg(head, temp_aggreg, elem_prev);
+			}
 			temp_aggreg = temp_aggreg->next;
 		}
 	}
@@ -551,7 +557,7 @@ Aggregate *gathering(Aggregate *head, Chlamydomonas **head_Chlam, Chlamydomonas 
 	min --;
 	Chlamydomonas *temp = *head_Chlam;
 	if (elem != temp)
-		if (distance(temp, elem) <= DIST_AGGREGATE) {
+		if ((distance(temp, elem) <= DIST_AGGREGATE) && (rand() % prob_max < prob_aggregation_between_cells)) {
 			Chlamydomonas *mothership = create_chlam(NO_COORD, NO_COORD, NO_COORD, 0);
 			mothership->next = temp;
 			head = spawn_Aggregate(head, mothership, elem_prev);
@@ -561,7 +567,7 @@ Aggregate *gathering(Aggregate *head, Chlamydomonas **head_Chlam, Chlamydomonas 
 /*Because we ask for the previous one, we must create a non existent Chlamydomonas that will be that previous one*/
 		}
 	while (min > 0) {
-//		if (temp->next == NULL) return head;
+		if (temp->next == NULL) return head;
 /*Because of our conditions, we should never be able to reach the end of the list and get a segfault*/
 		if (elem != temp->next) {
 			if (distance(temp->next, elem) <= DIST_AGGREGATE)
@@ -628,11 +634,17 @@ void kill_chlam(Chlamydomonas *elem_prev)
 	// Void function, changes the 'ancestor'
 	//
 	------------------------------------------------------------------------*/
+	if (elem_prev == NULL) 
+		return;
+	if (elem_prev->next == NULL) 
+		return;
 
 	if (rand() % prob_max < prob_die) {
 		Chlamydomonas *temp = elem_prev->next;
 		elem_prev->next = temp->next;
 		free (temp);
+		exhaust(elem_prev);
+		return kill_chlam(elem_prev);
 	}
 }/*Kills one precise Chlamydomonas if conditions were too harsh for it to live*/
 
@@ -677,7 +689,9 @@ Chlamydomonas *desaggregate(Chlamydomonas *head_Chlam, Aggregate **head, Aggrega
 			Chlamydomonas *temp = aggreg->head;
 			free(aggreg);
 			aggreg_prev->next = *head;
-			return desaggregate(temp, head, aggreg_prev);
+			if (rand() % prob_max < prob_disaggregation)
+				return desaggregate(temp, head, aggreg_prev);
+			return temp;
 		}
 		Chlamydomonas *temp = head_Chlam;
 		while (temp->next != NULL)
@@ -720,7 +734,6 @@ void delete_world()
 		free(numb_per_coord.numb_per_y);
 		free(numb_per_coord.numb_per_z);
 	}
-//printf("SUCCESS DE TOUT CASSER\n");
 }/*Makes sure all the memory we took is freed*/
 
 Chlamydomonas *mitosis(Chlamydomonas *head, Chlamydomonas *elem)
@@ -735,6 +748,8 @@ Chlamydomonas *mitosis(Chlamydomonas *head, Chlamydomonas *elem)
 	//
 	------------------------------------------------------------------------*/
 
+	if (elem == NULL)
+		return NULL;
 	if ((elem->food > 3) && (rand() % prob_max < prob_init_clonage)) {
 		head = adding_chlam(head, create_chlam(elem->x,elem->y,elem->z,elem->food / 2));
 		elem->food /= 2;
@@ -763,7 +778,8 @@ Aggregate *mitosis_in_aggregate(Aggregate *head, Aggregate *elem_prev)
 		if (elem == head) {
 			head = elem->next;
 			free(elem);
-			return head;
+			elem_prev->next = head;
+			return mitosis_in_aggregate(head, elem_prev);
 		}
 		elem_prev->next = elem->next;
 		free(elem);
@@ -798,7 +814,7 @@ Chlamydomonas *modify_distances_in_aggregate(Aggregate *elem, Chlamydomonas *ind
 	// modify_distances_in_aggregate
 	// Takes off the distance between all Chlamydomonas of an aggregate and an individual
 	//
-	// Receives the Chlamydomonas that is to be integrated to an aggregate and that aggregate
+	// Receives the Chlamydomonas that is to be taken off an aggregate and that aggregate
 	// Void function. Modifies the aggregate and the Chlamydomonas
 	//
 	------------------------------------------------------------------------*/
@@ -865,8 +881,8 @@ Aggregate *hunger_in_aggregate(Aggregate *elem_prev)
 			elem->number --;
 			Chlamydomonas * temp2 = temp->next;
 			temp->next = temp2->next;
+			elem->center = modify_distances_in_aggregate(elem, temp2);
 			free(temp2);
-			elem->center = modify_distances_in_aggregate(elem, temp->next);
 		}
 		else 
 			temp = temp->next;
@@ -921,8 +937,8 @@ Aggregate *hunger_all_aggregates(Aggregate *head)
 					head->number --;
 					Chlamydomonas * temp2 = temp->next;
 					temp->next = temp2->next;
+					head->center = modify_distances_in_aggregate(head, temp2);
 					free(temp2);
-					head->center = modify_distances_in_aggregate(head, temp->next);
 				}
 				else 
 					temp = temp->next;
@@ -938,7 +954,7 @@ Aggregate *hunger_all_aggregates(Aggregate *head)
 			delete_world();
 			return NULL;
 		} 
-		else free(test);
+		free(test);
 	}
 	else {
 		mothership->next = head;
@@ -975,43 +991,32 @@ void patch(Chlamydomonas **head_Chlam, Aggregate **head_Aggregate)
 		mothership_aggregate->next = *head_Aggregate;
 		if (rand() % prob_max < prob_disaggregation)
 			*head_Chlam = desaggregate(*head_Chlam, head_Aggregate, mothership_aggregate);
-		do {
-			mothership_aggregate->next = *head_Aggregate;
-			*head_Aggregate = mitosis_in_aggregate(*head_Aggregate, mothership_aggregate);
-		}while (*head_Aggregate != mothership_aggregate->next);
+		*head_Aggregate = mitosis_in_aggregate(*head_Aggregate, mothership_aggregate);
 		free(mothership_aggregate);
 		Aggregate *temp_aggreg = (*head_Aggregate);
 		if (temp_aggreg != NULL) {
+			*head_Aggregate = hunger_all_aggregates(*head_Aggregate);
 			while (temp_aggreg->next != NULL) {
 				*head_Aggregate = mitosis_in_aggregate(*head_Aggregate, temp_aggreg);
 				if (rand() % prob_max < prob_disaggregation)
 					*head_Chlam = desaggregate(*head_Chlam, head_Aggregate, temp_aggreg);
-				temp_aggreg = temp_aggreg->next;
+				else temp_aggreg = temp_aggreg->next;
 			}
-			*head_Aggregate = hunger_all_aggregates(*head_Aggregate);
 		}
 	}
 	Chlamydomonas *mothership = create_chlam(NO_COORD,NO_COORD,NO_COORD, 0);
 	mothership->next = *head_Chlam;	
 	exhaust(mothership);
-	while (mothership->next != *head_Chlam) {
-		*head_Chlam = mothership->next;
-		exhaust(mothership);
-	}
 	kill_chlam(mothership);
+	*head_Chlam = mothership->next;
 	*head_Aggregate = gathering(*head_Aggregate, head_Chlam, mothership);
 	free(mothership);
 
 	mothership = *head_Chlam;
-	Chlamydomonas *temp_test;
 	while (mothership != NULL) {
 		check_change_dir(mothership);
 		move(mothership);
-		temp_test = mothership->next;
-		do {
-			temp_test = mothership->next;
-			exhaust(mothership);
-		} while (temp_test != mothership->next);
+		exhaust(mothership);
 		kill_chlam(mothership);
 		*head_Aggregate = gathering(*head_Aggregate, head_Chlam, mothership);
 		*head_Chlam = mitosis(*head_Chlam, mothership);
