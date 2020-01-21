@@ -679,7 +679,8 @@ Chlamydomonas *desaggregate(Chlamydomonas *head_Chlam, Aggregate **head, Aggrega
 	// Returns the updated Chlamydomonas list, modifies the aggregate list
 	//
 	------------------------------------------------------------------------*/
-
+	if (aggreg_prev == NULL)
+		return head_Chlam;
 	if (aggreg_prev->next == NULL)
 		return head_Chlam;
 	Aggregate *aggreg = aggreg_prev->next;
@@ -698,6 +699,7 @@ Chlamydomonas *desaggregate(Chlamydomonas *head_Chlam, Aggregate **head, Aggrega
 			temp = temp->next;
 		temp->next = aggreg->head;
 		free (aggreg);
+		aggreg_prev->next = *head;
 		return head_Chlam;
 	}
 	if (head_Chlam == NULL) {
@@ -993,14 +995,16 @@ void patch(Chlamydomonas **head_Chlam, Aggregate **head_Aggregate)
 			*head_Chlam = desaggregate(*head_Chlam, head_Aggregate, mothership_aggregate);
 		*head_Aggregate = mitosis_in_aggregate(*head_Aggregate, mothership_aggregate);
 		free(mothership_aggregate);
-		Aggregate *temp_aggreg = (*head_Aggregate);
-		if (temp_aggreg != NULL) {
+		if (*head_Aggregate != NULL) {
 			*head_Aggregate = hunger_all_aggregates(*head_Aggregate);
-			while (temp_aggreg->next != NULL) {
-				*head_Aggregate = mitosis_in_aggregate(*head_Aggregate, temp_aggreg);
-				if (rand() % prob_max < prob_disaggregation)
-					*head_Chlam = desaggregate(*head_Chlam, head_Aggregate, temp_aggreg);
-				else temp_aggreg = temp_aggreg->next;
+			Aggregate *temp_aggreg = (*head_Aggregate);
+			if (temp_aggreg != NULL) {
+				while (temp_aggreg->next != NULL) {
+					*head_Aggregate = mitosis_in_aggregate(*head_Aggregate, temp_aggreg);
+					if (rand() % prob_max < prob_disaggregation)
+						*head_Chlam = desaggregate(*head_Chlam, head_Aggregate, temp_aggreg);
+					else temp_aggreg = temp_aggreg->next;
+				}
 			}
 		}
 	}
