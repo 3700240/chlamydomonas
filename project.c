@@ -46,9 +46,9 @@ int prob_aggregation_between_cells = 45;
 int prob_self_aggregating = 200;
 int dimin_prob_clonage = 16; 
 int prob_init_clonage = 100;
-int prob_eat = 4000;
+int prob_eat = 200;
 int prob_change_direction = 100;
-int prob_die = 50;
+int prob_die = 0;
 int prob_disaggregation = 10;
 int prob_max = 1000;
 

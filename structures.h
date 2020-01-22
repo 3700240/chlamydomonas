@@ -5,6 +5,7 @@ typedef struct chlamydomonas {
 	int direction;
     int food;
 	struct chlamydomonas *next;
+    struct chlamydomonas *prev;
     float distance_in_aggregate;
 }Chlamydomonas;
 
@@ -20,4 +21,5 @@ typedef struct aggregate {
     Chlamydomonas *head;
     float radius;
     struct aggregate *next;
+    struct aggregate *prev;
 }Aggregate;

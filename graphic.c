@@ -1183,8 +1183,9 @@ void draw3D()
 {
 	glClearColor(0,0,0,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	if (is_tutorial)
+	if (NO_MORE_MEMORY)
+		printf("Foutu\n");
+	else if (is_tutorial)
 		tutorial();
 	else {
 		switch (test_options) {
