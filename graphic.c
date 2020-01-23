@@ -9,7 +9,6 @@
 #include "globales.h"
 #include "headers.h"
 
-extern Numb_per_coord numb_per_coord;
 extern Chlamydomonas *head_chlam;
 extern Aggregate *head_aggregate;
 extern int pass;

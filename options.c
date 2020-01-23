@@ -8,7 +8,6 @@
 #include "globales.h"
 #include "headers.h"
 
-extern Numb_per_coord numb_per_coord;
 extern Chlamydomonas *head_chlam;
 extern Aggregate *head_aggregate;
 
@@ -35,8 +34,8 @@ void KeyboardManagement(unsigned char key, int x, int y)
                 glutPostRedisplay();
             }
             else if (!test_options) {
-                if (is_initiated) delete_world();
-                init_world();
+                if (is_initiated) delete_World();
+                init_World();
                 glutPostRedisplay();
             }
             if (!pass) pass = 25;
@@ -51,12 +50,12 @@ void KeyboardManagement(unsigned char key, int x, int y)
         //Reset probas = init_stats();
             break;
         case ' ': for (int i = 0; i < patches_per_draw; i++) 
-                    patch(&head_chlam, &head_aggregate);
+                    patch();
             glutPostRedisplay();
             break;
         case 'k':
             if (is_initiated)
-                delete_world();
+                delete_World();
             glutDestroyWindow(id_window);
             break;
         case 'z': if (!test_options) {
@@ -735,7 +734,7 @@ void MouseManagement(int button, int state, int x, int y)
                 if (((x - 0.5 * xmax)/(0.5 * min) > -0.9) && ((x - 0.5 * xmax)/(0.5 * min) < 0.9)) {
                     if ((0.5 * ymax - y)/(0.5 * min) > 0.667) {
                         switch (test_options) {
-                            case 11: if (is_initiated) delete_world();
+                            case 11: if (is_initiated) delete_World();
                                 glutDestroyWindow(id_window);
                                 break;
                             case 110: test_options = 302;
@@ -752,8 +751,8 @@ void MouseManagement(int button, int state, int x, int y)
                     else if ((0.5 * ymax - y)/(0.5 * min) > 0.333) {
                         switch (test_options) {
                             case 21: if (is_initiated)
-                                    delete_world();
-                                init_world();
+                                    delete_World();
+                                init_World();
                                 is_initiated = 1;
                                 test_options = 0;
                                 glutPostRedisplay();
@@ -898,12 +897,12 @@ void ArrowkeysManagement(int key, int x, int y)
 void menu_options(int key)
 {
     switch (key) {
-        case 1:delete_world();
+        case 1:delete_World();
             glutDestroyWindow(id_window);
             break;
         case 2: if(is_initiated)
-                delete_world();
-            init_world ();
+                delete_World();
+            init_World ();
             glutPostRedisplay();
             break;
         case 3:test_options = 1;

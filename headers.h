@@ -1,11 +1,11 @@
-void patch(Chlamydomonas **head_Chlam, Aggregate **head_Aggregate);
+void patch();
 void draw3D();
 void reshape(GLsizei width, GLsizei height);
 void KeyboardManagement(unsigned char key, int x, int y);
 void MouseManagement(int button, int state, int x, int y);
 void ArrowkeysManagement(int key, int x, int y);
-void delete_world();
-void init_world();
+void delete_World();
+void init_World();
 void init_stats();
 void init_menu();
 void affich_message(unsigned char test);

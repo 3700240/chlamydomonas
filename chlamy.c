@@ -1,11 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "globales.h"
 #include "structures.h"
-void delete_world();
+void delete_World();
 
 Chlamydomonas *head_chlam = NULL;
 Aggregate *head_aggregate = NULL;
@@ -39,7 +38,6 @@ int prob_die = 0;
 int prob_disaggregation = 1;
 int prob_max = 1000;
 */
-
 
 void init_stats() 
 {
@@ -78,22 +76,12 @@ void init_stats()
 /*Basically here the prob to eat is 10%, the one to divide is 8%, aggregates lose a 1.6% chance to divide per individual,...*/
 }
 
-Chlamydomonas *create_chlam(int x, int y, int z, int food)
+Chlamydomonas *create_Chlam(int x, int y, int z, int food)
 {
-	/*------------------------------------------------------------------------
-	//
-	// create_chlam
-	// This function creates a new Chlamydomonas given its coordinates and its energy to start with
-	//
-	// Takes the int values of 3D coordinates, and an int containing its energy value
-	// Returns a pointer to the created Chlamydomonas
-	//
-	------------------------------------------------------------------------*/
-
 	Chlamydomonas *new = (Chlamydomonas *) malloc(sizeof(Chlamydomonas));
 	if (new == NULL) {
 		NO_MORE_MEMORY = 1;
-		delete_world();
+		delete_World();
 		return NULL;
 	}
 	new->x = x;
@@ -101,838 +89,583 @@ Chlamydomonas *create_chlam(int x, int y, int z, int food)
 	new->z = z;
 	new->prev = NULL;
 	new->next = NULL;
+	new->food = food;
 	new->distance_in_aggregate = 0.0;
 	new->direction = rand() % 6;
-	new->food = food;
 
 	return new;
 }
 
-Chlamydomonas *adding_chlam(Chlamydomonas *head, Chlamydomonas *elem)
+Aggregate *create_Aggreg(Chlamydomonas *center)
 {
-	/*------------------------------------------------------------------------
-	//
-	// adding_chlam
-	// Adds a Chlamydomonas to a single-chained list of Chlamydomonas. List is not sorted in any way
-	//
-	// Takes the head of a first element of a next-chained list, and an element to insert 
-	// Returns a pointer to the new list (basically the new element, chained to the list)
-	//
-	------------------------------------------------------------------------*/
+	Aggregate *new = (Aggregate *) malloc(sizeof(Aggregate));
+	if (new == NULL) {
+		NO_MORE_MEMORY = 1;
+		delete_World();
+		return NULL;
+	}
+	new->number = 1;
+	new->center = new->head = center;
+	new->radius = 0;
+	new->prev = new->next = NULL;
 
+	return new;
+}
+
+float find_Distance(Chlamydomonas *first, Chlamydomonas *second)
+{
+	return sqrt((double)((first->x - second->x) * (first->x - second->x) + (first->y - second->y) * (first->y - second->y) + (first->z - second->z) * (first->z - second->z)));
+}
+
+Chlamydomonas *find_Center(Chlamydomonas *list, Chlamydomonas *new, float *radius)
+{
+	float distance = find_Distance(list, new);
+	*radius = list->distance_in_aggregate += distance;
+	new->distance_in_aggregate = distance;
+	Chlamydomonas *center = list;
+	list = list->next;
+	while (list != NULL) {
+		distance = find_Distance(list, new);
+		list->distance_in_aggregate += distance;
+		new->distance_in_aggregate += distance;
+		if (list->distance_in_aggregate < *radius) {
+			*radius = list->distance_in_aggregate;
+			center = list;
+		}
+		list = list->next;
+	}
+	return center;
+}
+
+void add_Chlam(Chlamydomonas *elem)
+{
+	if (head_chlam == NULL) {
+		head_chlam = elem;
+		return;
+	}
 	if (elem == NULL)
-		return head;
-	if (head == NULL)
-		return elem;
-	elem->next = head;
-	head->prev = elem;
+		return;
+	elem->next = head_chlam;
+	head_chlam->prev = elem;
+	head_chlam = elem;
+}
 
-	return elem;
-} /*Adds a new Chlamydomonas to our list*/
-
-float distance(Chlamydomonas *numb1, Chlamydomonas *numb2)
+void add_Aggreg(Aggregate *elem)
 {
-	/*------------------------------------------------------------------------
-	//
-	// distance
-	// Measures the distance between 2 cells
-	//
-	// Takes as parameters the 2 cells
-	// Returns a float of the distance between them (Euclidian norm)
-	//
-	------------------------------------------------------------------------*/
+	if (head_aggregate == NULL) {
+		head_aggregate = elem;
+		return;
+	}
+	if (elem == NULL)
+		return;
+	head_aggregate->prev = elem;
+	elem->next = head_aggregate;
+	head_aggregate = elem;
+}
 
-	return sqrt((double) ((numb1->x - numb2->x) * (numb1->x - numb2->x) + (numb1->y - numb2->y) * (numb1->y - numb2->y) + (numb1->z - numb2->z) * (numb1->z - numb2->z)));
-} /*Finds the distance between 2 Chlamydomonas, using the Euclidian norm*/
-
-Chlamydomonas *find_center(Chlamydomonas *list, Chlamydomonas *new_elem, float *radius)
+Aggregate *Take_Chlam_From_Agg(Chlamydomonas *target, Aggregate *host)
 {
-	/*------------------------------------------------------------------------
-	//
-	// find_center
-	// Locates the center of a Chlamydomonas list + the one that will be integrated within: the center minimizes the sum of distance
-	//
-	// Takes as parameters the list, the cell that will be added to the group (referred to as aggregates) and a pointer to a float giving the average distance
-	// Changes the value of the average distance in the aggregate, returns the Chlamydomonas closest to the center
-	//
-	------------------------------------------------------------------------*/
-
-	float length = distance(list, new_elem);
-	list->distance_in_aggregate += length;
-	new_elem->distance_in_aggregate = length;
-
-	float minima = list->distance_in_aggregate;
-	Chlamydomonas *temp_center = list;
-
-	Chlamydomonas *temp = list->next;
-	while (temp != NULL) {
-		length = distance(temp, new_elem);
-		temp->distance_in_aggregate += length;
-		new_elem->distance_in_aggregate += length;
-		if (minima > temp->distance_in_aggregate) {
-			minima = temp->distance_in_aggregate;
-			temp_center = temp;
+	if (host == NULL)
+		return NULL;
+	if (host->head == target){
+		host->head = target->next;
+		if (host->head == NULL) {
+			if (head_aggregate == host) {
+				head_aggregate = head_aggregate->next;
+				free(target);
+				free(host);
+				return head_aggregate;
+			}
+			Aggregate *next = host->next;
+			host->prev->next = host->next;
+			if (host->next != NULL)
+				host->next->prev = host->prev;
+			free(target);
+			free(host);
+			return next;
+		}
+	}
+	else {
+		target->prev->next = target->next;
+		if (target->next != NULL)
+			target->next->prev = target->prev;
+	}
+	host->number --;
+	Chlamydomonas *temp = host->head;
+	temp->distance_in_aggregate -= find_Distance(temp, target);
+	float distance = temp->distance_in_aggregate;
+	Chlamydomonas *center = temp;
+	while (center != NULL) {
+		temp->distance_in_aggregate -= find_Distance(temp, target);
+		if (temp->distance_in_aggregate < distance) {
+			distance = temp->distance_in_aggregate;
+			center = temp;
 		}
 		temp = temp->next;
 	}
-	*radius = minima;
-	return temp_center;
-} /*Finds the center, returns it and gives out the radius (WARNING: a radius's address must be given)*/
+	free(target);
+	host->center = center;
+	host->radius = distance / host->number;
+	return host;
+}
 
-Aggregate *add_aggreg(Aggregate *head, Aggregate *new)
+void add_Chlam_To_Agg(Aggregate *target, Chlamydomonas *elem)
 {
-	/*------------------------------------------------------------------------
-	//
-	// add_aggreg
-	// Adds an aggregate to an existing (or not) list of aggregates
-	//
-	// Takes as parameters the list, the aggregate that is to be added
-	// Returns a new list including all pre-existing aggregates and the new one
-	//
-	------------------------------------------------------------------------*/
+	if (elem == head_chlam) {
+		head_chlam = head_chlam->next;
+		if (head_chlam != NULL)
+			head_chlam->prev = NULL;
+	}
+	else {
+		elem->prev->next = elem->next;
+		if (elem->next != NULL)
+			elem->next->prev = elem->prev;
+	}
+	target->center = find_Center(target->head, elem, &(target->radius));
+	target->number ++;
+	target->radius /= target->number;
+	elem->next = target->head;
+	target->head = elem;
+	elem->prev = NULL;
+}
 
-	if (new == NULL)
-		return head;
-	if (head == NULL)
-		return new;
-	new->next = head;
-	head->prev = new;
-	return new;
-} /*Adds an aggregate to our Aggregate list*/
-
-Aggregate *adding_chlam_to_agg(Aggregate *head, Aggregate *aggreg, Chlamydomonas **elem)
+Aggregate *disaggregation(Aggregate *target)
 {
-	/*------------------------------------------------------------------------
-	//
-	// adding_chlam_to_agg
-	// Adds a Chlamydomonas to an aggregate in our list (may create the aggregate in the meantime). Takes it off the Chlamydomonas list. Checks for the center of the aggregate
-	//
-	// Takes as parameters the list of aggregates, the aggregate we want to insert our Chlamydomonas in, the 'ancestor' of the said Chlamydomonas
-	// Returns the completed list of aggregate with infos updated
-	//
-	------------------------------------------------------------------------*/
+	Aggregate *next = target->next;
 
-	if (*elem == NULL)
-		return head;
-	if (aggreg == NULL) {
-		aggreg = (Aggregate *) malloc(sizeof(Aggregate));
-		if (aggreg == NULL) {
-			NO_MORE_MEMORY = 1;
-			delete_world();
-			return NULL;
+	if (head_aggregate == target) {
+		head_aggregate = next;
+		if (head_aggregate != NULL)
+			head_aggregate->prev = NULL;
+	}
+	else { 
+		target->prev->next = next;
+		if (next != NULL)
+			next->prev = target->prev;
+	}
+	Chlamydomonas *temp = target->head;
+	if (temp == NULL) {
+		free(target);
+		return next;
+	}
+	Chlamydomonas *temp2 = temp;
+	while (temp2->next != NULL) {
+		temp2 = temp2->next;
+	}
+	temp2->next = head_chlam;
+	if (head_chlam != NULL)
+		head_chlam->prev = temp2;
+	head_chlam = temp;
+	return next;
+}
+
+void check_Change_Dir(Chlamydomonas *elem)
+{
+	if (elem == NULL)
+		return;
+	if (rand() % prob_max < prob_change_direction)
+		elem->direction = (elem->direction + 1 + (rand() % 5)) % 6; 
+}
+
+void force_Change_Dir(Chlamydomonas *elem)
+{
+	if (elem == NULL)
+		return;
+	elem->direction = (elem->direction + 1 +(rand() % 5)) % 6;
+}
+
+void move(Chlamydomonas *elem)
+{
+	if (elem == NULL)
+		return;
+	switch (elem->direction) {
+		case 0: if (elem->x > XMIN)
+				elem->x --;
+/*
+			else {
+				force(Change_Dir(elem));
+				move(elem);
+			}
+*/ //Uncomment if you don't want them to 'run' into walls
+			break;
+		case 1: if (elem->y < XMAX)
+				elem->x ++;
+/*
+			else {
+				force(Change_Dir(elem));
+				move(elem);
+			}
+*/ //Uncomment if you don't want them to 'run' into walls
+			break;
+		case 2: if (elem->y > YMIN)
+				elem->y --;
+/*
+			else {
+				force(Change_Dir(elem));
+				move(elem);
+			}
+*/ //Uncomment if you don't want them to 'run' into walls
+			break;
+		case 3: if (elem->y < YMAX)
+				elem->y ++;
+/*
+			else {
+				force(Change_Dir(elem));
+				move(elem);
+			}
+*/ //Uncomment if you don't want them to 'run' into walls
+			break;
+		case 4: if (elem->z > ZMIN)
+				elem->z --;
+/*
+			else {
+				force(Change_Dir(elem));
+				move(elem);
+			}
+*/ //Uncomment if you don't want them to 'run' into walls
+			break;
+		case 5: if (elem->z < ZMAX)
+				elem->z ++;
+/*
+			else {
+				force(Change_Dir(elem));
+				move(elem);
+			}
+*/ //Uncomment if you don't want them to 'run' into walls
+			break;
+	}
+}
+
+Aggregate *spawn_Aggreg(Chlamydomonas *first, Chlamydomonas *second)
+{
+	if (first == second)
+		return create_Aggreg(first);
+
+	Aggregate *new = (Aggregate *) malloc(sizeof(Aggregate));
+	if (new == NULL) {
+		NO_MORE_MEMORY = 1;
+		delete_World();
+		return NULL;
+	}
+
+	if (first->next == second) {
+		if (head_chlam == first) {
+			head_chlam = second->next;
+			if (head_chlam != NULL)
+				head_chlam->prev = NULL;
 		}
-		if ((*elem)->prev == NULL) { /* No ancestor */
-			if ((*elem)->next != NULL) /*Follower*/
-				(*elem)->next->prev = NULL;
-			aggreg->center = aggreg->head = *elem;
-			aggreg->number = 1;
-			aggreg->radius = 0;
-			if (head == NULL) { /*List leader, yay!*/
-				aggreg->next = aggreg->prev =  NULL;
-				*elem = (*elem)->next;
-				aggreg->center->next = aggreg->center->prev = NULL;	
-				return aggreg;
-			} /*Take the chief's seat!*/
-			aggreg->next = head;
-			aggreg->prev = NULL;
-			head->prev = aggreg;
-			*elem = (*elem)->next;
-			aggreg->center->next = aggreg->center->prev = NULL;
-			return aggreg;
-		} /*Now has an ancestor*/
-		(*elem)->prev->next = (*elem)->next;
-		if ((*elem)->next != NULL) /*Minion*/
-			(*elem)->next->prev = (*elem)->prev;
-		(*elem)->next = (*elem)->prev = NULL; /*Cutting off the world*/
-		aggreg->center = aggreg->head = *elem;
-		aggreg->number = 1;
-		aggreg->radius = 0;
-		*elem = (*elem)->next;
-		if (head == NULL){/*No boss*/
-			aggreg->next = aggreg->prev = NULL;
-			return aggreg;
-		}/*Boss to take care of*/
-		aggreg->next = head;
-		head->prev = aggreg;
-		aggreg->prev = NULL;
-		return aggreg;
+		else {
+			first->prev->next = second->next;
+			if (second->next != NULL)
+				second->next->prev = first->prev;
+		}
+		second->next = NULL;
+		new->head = new->center = first;
+		new->radius = first->distance_in_aggregate = second->distance_in_aggregate = find_Distance(first, second);
+		new->number = 2;
+		new->prev = new->next = NULL;
+		return new;
 	}
-
-	/*Addind to an existing aggregate*/
-	aggreg->number ++;
-	float radius = 0;
-	aggreg->center = find_center(aggreg->head, *elem, &radius);
-	aggreg->radius = radius / aggreg->number;
-	if ((*elem)->prev == NULL) {
-		(*elem)->prev = (*elem)->next;
-		(*elem)->next = aggreg->head;
-		aggreg->head->prev = *elem;
-		aggreg->head = *elem;
-		*elem = (*elem)->prev;
-		aggreg->head->prev = NULL;
-		aggreg->number ++;
-
-		if ((*elem) != NULL)
-			(*elem)->prev = NULL;
-		return head;
+	if (second->next == first) {
+		if (head_chlam == second) {
+			head_chlam = first->next;
+			if (head_chlam != NULL)
+				head_chlam->prev = NULL;
+		}
+		else {
+			second->prev->next = first->next;
+			if (first->next != NULL)
+				first->next->prev = second->prev;
+		}
+		first->next = NULL;
+		new->head = new->center = second;
+		new->radius = second->distance_in_aggregate = first->distance_in_aggregate = find_Distance(second, first);
+		new->number = 2;
+		new->prev = new->next = NULL;
+		return new;
 	}
-	(*elem)->prev->next = (*elem)->next;
-	(*elem)->next->prev = (*elem)->prev;
-	(*elem)->next = aggreg->head;
-	aggreg->head->prev = *elem;
-	aggreg->head = *elem;
-	*elem = (*elem)->prev->next;
-	aggreg->head->prev = NULL;
-	return head;
-/*Adding the Chlamydomonas to the aggregate, taking it off the list
-That specific aggregate already is in our list, so all good*/
-}/*Adds a Chlamydomonas to a given aggregate, takes it off the list, recalculates the center and radius*/
+	if (head_chlam == first) {
+		head_chlam = first->next;
+		if (head_chlam != NULL)
+			head_chlam->prev = NULL;
+	}
+	else {
+		first->prev->next = first->next;
+		if (first->next != NULL)
+			first->next->prev = first->prev;
+	}
+	if (head_chlam == second) {
+		head_chlam = second->next;
+		if (head_chlam != NULL)
+			head_chlam->prev = NULL;
+	}
+	else {
+		second->prev->next = second->next;
+		if (second->next != NULL)
+			second->next->prev = second->prev;
+	}
+	new->head = new->center = first;
+	new->radius = first->distance_in_aggregate = second->distance_in_aggregate = find_Distance(first, second);
+	new->number = 2;
+	new->prev = new->next = NULL;
+	first->next = second;
+	second->next = first->prev = NULL;
+	second->prev = first;
+	return new;
+}
 
-
-void init_world()
+void kill_Chlam(Chlamydomonas *elem)
 {
-	/*------------------------------------------------------------------------
-	//
-	// init_world
-	// Initializes the world with the given number of Chlamydomonas randomly positionned. Sets the seed for rand
-	//
-	// Takes no input parameters
-	// The lists are global variables, as is the memo to know the number of Chlamydomonas per given paralleloid. However the function is void type
-	//
-	------------------------------------------------------------------------*/
-
-	head_chlam = NULL;
-	head_aggregate = NULL;
-
-	srand((unsigned) time(NULL));
-
-	for (int i = 0; i < NB_INIT; i++) {
-		head_chlam = adding_chlam(head_chlam, create_chlam((rand() % (XMAX - XMIN + 1)) + XMIN, (rand() % (YMAX - YMIN + 1)) + YMIN,(rand() % (ZMAX - ZMIN + 1)) + ZMIN, FOOD_INIT));
+	if (elem == NULL)
+		return;
+	if (head_chlam == elem) {
+		head_chlam = elem->next;
+		if (head_chlam != NULL)
+			head_chlam->prev = NULL;
 	}
-//	printf("Initialisation SUCCESS");///////////////////////////////////////////////
-}/*Creating the specified number of Chlamydomonas randomly positioned in the given coordinates
-Also, initiating the seed for random*/
+	else {
+		elem->prev->next = elem->next;
+		if (elem->next != NULL)
+			elem->next->prev = elem->prev;
+	}
+	free(elem);
+}
 
-Chlamydomonas *exhaust(Chlamydomonas *elem)
+Chlamydomonas *hunger_Chlamydomonas(Chlamydomonas *elem)
 {
-	/*------------------------------------------------------------------------
-	//
-	// exhaust
-	// Food supply and takes the cell off the list if necessary
-	//
-	// Takes as a parameter the Chlamydomonas it must check
-	// Returns the last Chlam that went through hunger process and survived
-	//
-	------------------------------------------------------------------------*/
-
 	if (elem == NULL)
 		return NULL;
 	if (rand() % prob_max < prob_eat)
 		elem->food += food_increase;
-	else elem->food -= food_decrease;
+	else 
+		elem->food -= food_decrease;
 	if (elem->food <= 0) {
 		Chlamydomonas *temp = elem->next;
-		if (elem->prev == NULL) {
-			free(elem);
-			if (temp != NULL)
-				temp->prev = NULL;
-			return exhaust(temp);
+		kill_Chlam(elem);
+		if (temp == NULL)
+			return NULL;
+		elem = temp;
+		while (elem != NULL && rand() % prob_max < prob_die) {
+			temp = elem->next;
+			kill_Chlam(elem);
+			elem = temp;
 		}
-		elem->prev->next = temp;
-		if (temp != NULL)
-			temp->prev = elem->prev;
-		free(elem);
-		return exhaust(temp);
+		return hunger_Chlamydomonas(elem);
 	}
 	return elem;
-}
+} //Will return the first guy in the list to survive hunger process
 
-void check_change_dir(Chlamydomonas *elem)
+Chlamydomonas *aggregation(Chlamydomonas *elem)
 {
-	/*------------------------------------------------------------------------
-	//
-	// check_change_dir
-	// Checks if the given Chlamydomonas can change its direction, and forces a change if so
-	//
-	// Takes as parameter the Chlamydomonas that is to be checked
-	// Void function. The said Chlamydomonas is (or not) modified
-	//
-	------------------------------------------------------------------------*/
-
 	if (elem == NULL)
-		return;
-	if (rand() % prob_max < prob_change_direction)
-		elem->direction = (elem->direction + 1 + rand() % 5) % 6; 
-} /*Randomly changes the direction if it is supposed to*/
-
-void force_change_dir(Chlamydomonas *elem)
-{
-	/*------------------------------------------------------------------------
-	//
-	// force_change_dir
-	// Forces a changement of direction for the said Chlamydomonas. Used if you don't want them to be stuck running into walls
-	//
-	// Takes as parameter the Chlamydomonas that is to be forced to change its direction
-	// Void function. The Chlamydomonas is modified
-	//
-	------------------------------------------------------------------------*/
-
-	if (elem == NULL)
-		return;
-	elem->direction = (elem->direction + 1 + rand() % 5) % 6;
-} /*Forces the element to change its direction
-Use it if you don't want them to 'run into walls'*/
-
-void move(Chlamydomonas *elem)
-{
-	/*------------------------------------------------------------------------
-	//
-	// move
-	// Moves a Chlamydomonas in a specified direction (either x or y or z)
-	//
-	// Takes as parameter the Chlamydomonas to be moved
-	// Void function. The Chlamydomonas is modified
-	//
-	------------------------------------------------------------------------*/
-
-	if (elem == NULL)
-		return;
-	switch (elem->direction) {
-		case 0:
-			if (elem->x > XMIN) {
-				elem->x --;
-			}
-/*			else { 
-				force_change_dir(elem); 
-				move(elem); 
-			} //Uncomment those lines if you don't want them to 'run into walls'
-*/
-			break;
-		case 1:
-			if (elem->x < XMAX) {
-				elem->x ++;
-			}
-/*			else { 
-				force_change_dir(elem); 
-				move(elem); 
-			} //Uncomment those lines if you don't want them to 'run into walls'
-*/
-			break;
-		case 2:
-			if (elem->y > YMIN) {
-				elem->y --;
-			}
-/*			else { 
-				force_change_dir(elem); 
-				move(elem); 
-			} //Uncomment those lines if you don't want them to 'run into walls'
-*/
-			break;
-		case 3:
-			if (elem->y < YMAX) {
-				elem->y ++;
-			}
-/*			else { 
-				force_change_dir(elem); 
-				move(elem); 
-			} //Uncomment those lines if you don't want them to 'run into walls'
-*/
-			break;
-		case 4:
-			if (elem->z > ZMIN) {
-				elem->z --;
-			}
-/*			else { 
-				force_change_dir(elem); 
-				move(elem); 
-			} //Uncomment those lines if you don't want them to 'run into walls'
-*/
-			break;
-		case 5:
-			if (elem->z < ZMAX) {
-				elem->z ++;
-			}
-/*			else { 
-				force_change_dir(elem); 
-				move(elem); 
-			} //Uncomment those lines if you don't want them to 'run into walls'
-*/
-			break;
-		default : printf("Error during the movements\n");
-	}
-}
-
-Aggregate *spawn_Aggregate(Aggregate *head, Chlamydomonas **first_chlam, Chlamydomonas **second_chlam)
-{
-	/*------------------------------------------------------------------------
-	//
-	// spawn_Aggregate
-	// Creates an aggregate from 2 existing Chlamydomonas, taking them off their list, and adds that one to the aggregate list
-	//
-	// Takes as parameters the aggregate list, and the 2 chlamydomonas that aggregate
-	// Returns the updated aggregate list. The center of the new aggregate is the first one given or the first in the list if they are next to each other
-	//
-	------------------------------------------------------------------------*/
-
-	Chlamydomonas *first = *first_chlam;
-	Chlamydomonas *second = *second_chlam;
-	if (first == NULL || second == NULL)
-		return head;
-	Aggregate *aggreg = (Aggregate *) malloc(sizeof(Aggregate));
-	if (aggreg == NULL) {
-		NO_MORE_MEMORY = 1;
-		delete_world();
 		return NULL;
-	}
-	if (first == second) { 
-		if (first->prev == NULL) {
-			*first_chlam = *second_chlam = first->next;
-		}
-		else 
-			first->prev->next = first->next;
-		if (first->next != NULL)
-			first->next->prev = first->prev;
-		aggreg->number = 1;
-		aggreg->center = first;
-		aggreg->head = first;
-		aggreg->radius = 0;
-		return add_aggreg(head,aggreg);
-	}
-	aggreg->number = 2;
-	float dist = distance(first, second);
-	aggreg->radius = dist/2.0;
-	first->distance_in_aggregate = dist;
-	second->distance_in_aggregate = dist;
-	if (first->next == second) {
-		aggreg->head = first;
-		aggreg->center = first;
-		if (first->prev != NULL)
-			first->prev->next = second->next;
-		if (second->next != NULL) {
-			second->next->prev = first->prev;
-			second->next = NULL;
-		}
-		aggreg->head->prev = NULL;
-		*first_chlam = *second_chlam = second->next;
-		return add_aggreg(head,aggreg);
-	}
-	if (second->next == first) {
-		aggreg->head = second;
-		aggreg->center = second;
-		if (second->prev != NULL)
-			second->prev->next = first->next;
-		if (first->next != NULL) {
-			first->next->prev = second->prev;
-			first->next = NULL;
-		}
-		aggreg->head->prev = NULL;
-		*second_chlam = *first_chlam = first->next;
-		return add_aggreg(head,aggreg);
-	}
-	aggreg->head = first;
-	aggreg->center = first;
-	if (first->prev != NULL)
-		first->prev->next = first->next;
-	if (first->next != NULL)
-		first->next->prev = first->prev;
-	first->prev = NULL;
-	first->next = second;
-	if (second->prev != NULL)
-		second->prev->next = second->next;
-	if (second->next != NULL)
-		second->next->prev = second->prev;
-	second->next = NULL;
-	second->prev = first;
+	Chlamydomonas *next = elem->next;
 
-	*first_chlam = first->next;
-	*second_chlam = second->next;
-
-	return add_aggreg(head, aggreg);
-}
-
-void kill_chlam(Chlamydomonas **elem)
-{
-	/*------------------------------------------------------------------------
-	//
-	// kill_chlam
-	// Checks if a chlamydomonas is to die (stress reason) and takes it off the list if necessary, freeing it
-	//
-	// Takes as parameter the Chlamydomonas that is to be checked. If it dies, goes for the next one
-	// Void function, changes the elements around that dude
-	//
-	------------------------------------------------------------------------*/
-	if (elem == NULL) 
-		return;
-
-	if (rand() % prob_max < prob_die) {
-		Chlamydomonas *temp = (*elem)->next;
-		if ((*elem)->prev != NULL)
-			(*elem)->prev->next = temp;
-		if ((*elem)->next != NULL)
-			temp->prev = (*elem)->prev;
-		free(*elem);
-		*elem = exhaust(temp);
-
-		return kill_chlam(elem);
-	}
-}/*Kills one precise Chlamydomonas if conditions were too harsh for it to live*/
-
-Aggregate *gathering(Aggregate *head, Chlamydomonas **head_Chlam, Chlamydomonas **elem)
-{
-	/*------------------------------------------------------------------------
-	//
-	// gathering
-	// Tries to make aggregates from one Chlamydomonas to: first off existing aggregates; then other Chlamydomonas in their surrounding
-	// If it managed to make an aggregate, exhausts the next guy, makes him move and tries to kill him and make him aggregate
-	//
-	// Takes as parameters the aggregate list, the chlamydomonas list, the 'ancestor' of the Chlamydomonas we will try to aggregate
-	// Returns the updated aggregate list
-	//
-	------------------------------------------------------------------------*/
-
-	if (*elem == NULL)
-		return head;
-	if (head != NULL) {
-		Aggregate *temp_aggreg = head;
+	if (head_aggregate != NULL) {
+		Aggregate *temp_aggreg = head_aggregate;
 		while (temp_aggreg != NULL) {
-			if (distance(*elem, temp_aggreg->center) <= temp_aggreg->radius + DIST_AGGREGATE) {
-				head = adding_chlam_to_agg(head, temp_aggreg, elem);
-				*elem = exhaust(*elem);
-				kill_chlam(elem);
-				check_change_dir(*elem);
-				move(*elem);
-				return gathering(head, head_Chlam, elem);
+			if (find_Distance(elem, temp_aggreg->center) <= temp_aggreg->radius + DIST_AGGREGATE) {
+				add_Chlam_To_Agg(temp_aggreg, elem);
+				elem = next;
+				while (elem != NULL && rand() % prob_max < prob_die) {
+					next = elem->next;
+					kill_Chlam(elem);
+					elem = next;
+				}
+				elem = hunger_Chlamydomonas(elem);
+				check_Change_Dir(elem);
+				move(elem);
+				return elem;
 			}
 			temp_aggreg = temp_aggreg->next;
 		}
 	}
-	Chlamydomonas *temp_chlam = *head_Chlam;
-	while (temp_chlam != NULL) {
-		if (temp_chlam != *elem)
-			if ((distance(*elem, temp_chlam) <= DIST_AGGREGATE) && (rand() % prob_max < prob_aggregation_between_cells)) {
-				head = spawn_Aggregate(head, &temp_chlam, elem);
-				*elem = exhaust(*elem);
-				kill_chlam(elem);
-				check_change_dir(*elem);
-				move(*elem);
-				return gathering(head, head_Chlam, elem);
+
+	Chlamydomonas *tempo = head_chlam;
+	while (tempo != NULL) {
+		printf("%d %d %d | %d\n", tempo->x, tempo->y, tempo->z, tempo->food);
+		tempo = tempo->next;
+	}
+	printf("\n");
+	Chlamydomonas *temp = head_chlam;
+	while (temp != NULL) {
+		if (temp != elem) {
+			if (find_Distance(elem, temp) <= DIST_AGGREGATE && rand() % prob_max < ) {
+				printf("%f;   ",find_Distance(elem,temp));
+				printf("elem : %d %d %d,   temp : %d %d %d\n",elem->x, elem->y, elem->z, temp->x, temp->y, temp->z);
+				if (temp == next) 
+					next = next->next;
+				add_Aggreg(spawn_Aggreg(temp, elem));
+				elem = next;
+				while (elem != NULL && rand() % prob_max < prob_die) {
+					next = next->next;
+					kill_Chlam(elem);
+					elem = next;
+				}
+				if (elem != NULL) {
+					elem = hunger_Chlamydomonas(elem);
+					if (elem != NULL) {
+						check_Change_Dir(elem);
+						move(elem);
+					}
+				}
+				return next;
 			}
-		temp_chlam = temp_chlam->next;
-	}
-	return head;
-}
-
-void destroy_chlam(Chlamydomonas *head)
-{
-	/*------------------------------------------------------------------------
-	//
-	// destroy_chlam
-	// Destroys the full list of Chlamydomonas, frees every space taken
-	//
-	// Takes as parameter the list of Chlamydomonas that is to be destroyed
-	// No output
-	//
-	------------------------------------------------------------------------*/
-
-	if (head == NULL)
-		return;
-	Chlamydomonas *temp = head->next;
-	free(head);
-	return destroy_chlam(temp);
-}/*Destroys our Chlamydomonas list*/
-
-void destroy_aggregates(Aggregate *head)
-{
-	/*------------------------------------------------------------------------
-	//
-	// destroy_aggregates
-	// Destroys the full list of aggregates, freeing every Chlamydomonas in the aggregates, and every aggregate in the list
-	//
-	// Takes as parameter the list of aggregates
-	// Void function
-	//
-	------------------------------------------------------------------------*/
-
-	if (head == NULL)
-		return;
-	destroy_chlam(head->head);
-	Aggregate *temp = head->next;
-	free (head);
-	destroy_aggregates(temp);
-}/*Destroys our aggregate list and all Chlamydomonas in the list*/
-
-Chlamydomonas *desaggregate(Chlamydomonas *head_Chlam, Aggregate **aggreg)
-{
-	/*------------------------------------------------------------------------
-	//
-	// desaggregate
-	// Liberates the Chlamydomonas in a given aggregate, adding them to the Chlamydomonas list
-	//
-	// Takes as parameter the Chlamydomonas list, a pointer to the aggregate list, a pointer to the aggregate to remove
-	// Returns the updated Chlamydomonas list, modifies the aggregate list
-	//
-	------------------------------------------------------------------------*/
-
-	Aggregate *temp_aggreg = *aggreg;
-
-	if (temp_aggreg == NULL)
-		return head_Chlam;
-	if (temp_aggreg->prev != NULL)
-		temp_aggreg->prev->next = temp_aggreg->next;
-	if (temp_aggreg->next != NULL)
-		temp_aggreg->next->prev = temp_aggreg->prev;
-	*aggreg = temp_aggreg->next;
-
-	Chlamydomonas *temp = temp_aggreg->head;
-	free(temp_aggreg);
-	if (head_Chlam == NULL) {
-		(*aggreg)->prev = NULL;
-		if (rand() % prob_max < prob_disaggregation)
-			return desaggregate(temp, aggreg);
-		return temp;
-	}
-	Chlamydomonas *temp2 = temp;
-	while (temp2->next != NULL) 
-		temp2 = temp2->next;
-	temp2->next = head_Chlam;
-	head_Chlam->prev = temp2;
-	return temp;
-}
-
-void delete_world()
-{
-	/*------------------------------------------------------------------------
-	//
-	// delete_world
-	// Destroys and frees all of the lists
-	//
-	// Takes as parameters the two lists (aggregates and Chlamydomonas)
-	// Void function
-	//
-	------------------------------------------------------------------------*/
-
-	destroy_chlam(head_chlam);
-	destroy_aggregates(head_aggregate);
-}/*Makes sure all the memory we took is freed*/
-
-Chlamydomonas *mitosis(Chlamydomonas *head, Chlamydomonas *elem)
-{
-	/*------------------------------------------------------------------------
-	//
-	// mitosis
-	// Checks for the possibility of a mitosis for a given Chlamydomonas, creates the clone, energy is splitted and rounded down
-	//
-	// Takes as parameter the Chlamydomonas that can run into mitosis, and the list of Chlamydomonas
-	// Returns the updated list of Chlamydomonas
-	//
-	------------------------------------------------------------------------*/
-
-	if (elem == NULL)
-		return NULL;
-	if ((elem->food > 3) && (rand() % prob_max < prob_init_clonage)) {
-		head = adding_chlam(head, create_chlam(elem->x,elem->y,elem->z,elem->food / 2));
-		elem->food /= 2;
-/* Yes there is a loss if the food supply is odd. Works as intended*/
-	}
-	return head;
-}/*If conditions are met, we create a new individual*/
-
-Aggregate *mitosis_in_aggregate(Aggregate *head, Aggregate *elem)
-{
-	/*------------------------------------------------------------------------
-	//
-	// mitosis_in_aggregate
-	// For all Chlamydomonas in a given aggregate, checks if they can go through mitosis
-	//
-	// Takes as parameters the aggregate that is to be checked
-	// Void function
-	//
-	------------------------------------------------------------------------*/
-
-	if (elem == NULL)
-		return head;
-	Chlamydomonas *temp = elem->head;
-	int number = elem->number;
-	int new_prob = prob_init_clonage - (number * dimin_prob_clonage);
-	Chlamydomonas *temp_chlam = NULL;
-	for (int i = 0; i < number; i++) {
-		if (new_prob <= 0)
-			i = number;
-		else {
-			if (rand() % prob_max < new_prob) {
-				temp->food /= 2;
-				temp_chlam = create_chlam(temp->x,temp->y,temp->z, temp->food);
-				head = adding_chlam_to_agg(head, elem, &temp_chlam);
-				new_prob -= dimin_prob_clonage;
-			}			
 		}
 		temp = temp->next;
 	}
-	return head;
+	return elem;
+}//Returns the first guy in the list that did NOT aggregate
+
+void mitosis(Chlamydomonas *elem)
+{
+	if (elem == NULL)
+		return;
+	elem->food /= 2;
+	add_Chlam(create_Chlam(elem->x, elem->y, elem->z, elem->food));
 }
 
-Chlamydomonas *modify_distances_in_aggregate(Aggregate *elem, Chlamydomonas *individual)
+void mitosis_In_Aggreg(Aggregate *elem)
 {
-	/*------------------------------------------------------------------------
-	//
-	// modify_distances_in_aggregate
-	// Takes off the distance between all Chlamydomonas of an aggregate and an individual
-	//
-	// Receives the Chlamydomonas that is to be taken off an aggregate and that aggregate
-	// Void function. Modifies the aggregate and the Chlamydomonas
-	//
-	------------------------------------------------------------------------*/
-
 	if (elem == NULL)
-		return NULL;
-	Chlamydomonas *new_center = elem->head;
-	float minima = new_center->distance_in_aggregate;
+		return;
 	Chlamydomonas *temp = elem->head;
-	while (temp != NULL){
-		temp->distance_in_aggregate -= distance(temp,individual);
-		if (minima > temp->distance_in_aggregate) {
-			minima = temp->distance_in_aggregate;
-			new_center = temp;
+	int new_prob = prob_init_clonage - elem->number * dimin_prob_clonage;
+	char test = 1;
+	while (temp != NULL && test) {
+		if (temp->food > 3 && rand() % prob_max < new_prob) {
+			temp->food /= 2;
+			add_Chlam_To_Agg(elem, create_Chlam(temp->x,temp->y,temp->z, temp->food));
+			new_prob -= dimin_prob_clonage;
+			if (new_prob <= 0)
+				test = 0;
 		}
 		temp = temp->next;
 	}
-	elem->radius = minima/elem->number;
-	return new_center;
 }
 
-Aggregate *hunger_in_aggregate(Aggregate *elem)
+Aggregate *hunger_Aggregate(Aggregate *elem)
 {
-	/*------------------------------------------------------------------------
-	//
-	// hunger_in_aggregate
-	// Makes sure every Chlamydomonas in the aggregate tries to eat, loses energy, and starves if necessary. If the aggregate turns out to be empty, checks for the next one
-	//
-	// Takes as parameter the aggregate that needs to be checked
-	// Returns the last aggregate that ate
-	//
-	------------------------------------------------------------------------*/
-
 	if (elem == NULL)
 		return NULL;
 	Chlamydomonas *temp = elem->head;
 	if (temp == NULL) {
-		if (elem->prev != NULL)
-			elem->prev->next = elem->next;
-		if (elem->next != NULL)
+		if (head_aggregate == elem) {
+			head_aggregate = elem->next;
+			if (head_aggregate != NULL)
+				head_aggregate->prev = NULL;
+			free(elem);
+			while (rand() % prob_max < prob_disaggregation)
+				head_aggregate = disaggregation(head_aggregate);
+			return hunger_Aggregate(head_aggregate);
+		}
+		elem->prev->next = elem->next;
+		if (elem->next != NULL) 
 			elem->next->prev = elem->prev;
-		Aggregate *temp_aggreg = elem->next;
+		Aggregate *next = elem->next;
 		free(elem);
-		if (rand() % prob_max < prob_disaggregation)
-			head_chlam = desaggregate(head_chlam, &temp_aggreg);
-		return hunger_in_aggregate(temp_aggreg);
+		while (rand() % prob_max < prob_disaggregation)
+			next = disaggregation(next);
+		return hunger_Aggregate(next);
 	}
 	if (rand() % prob_max < prob_eat)
 		temp->food += food_increase;
-	else temp->food -= food_decrease;
-	if (temp->food <= 0) {
-		elem->number --;
-		elem->head = temp->next;
-		if (elem->head == NULL) {
-			if (elem->prev != NULL)
-				elem->prev->next = elem->next;
-			if (elem->next != NULL)
-				elem->next->prev = elem->prev;
-			Aggregate *temp_aggreg = elem->next;
-			free(elem);
-			if (rand() % prob_max < prob_disaggregation)
-				head_chlam = desaggregate(head_chlam, &temp_aggreg);/*We changed aggregate so gotta make sure it doesn't explode*/
-			return hunger_in_aggregate(temp_aggreg); 
-		}
-		elem->head->prev = NULL;
-		elem->center = modify_distances_in_aggregate(elem, temp);
-		free(temp);
-		return hunger_in_aggregate(elem);
-	}
+	else 
+		temp->food -= food_decrease;
+	if (temp->food <= 0) 
+		return hunger_Aggregate(Take_Chlam_From_Agg(temp, elem));
+
 	temp = temp->next;
 	while (temp != NULL) {
 		if (rand() % prob_max < prob_eat)
 			temp->food += food_increase;
-		else temp->food -= food_decrease;
-		if (temp->food <= 0) {
-			elem->number --;
-			temp->prev->next = temp->next;
-			if (temp->next != NULL)
-				temp->next->prev = temp->prev;
-			Chlamydomonas *temp2 = temp;
-			elem->center = modify_distances_in_aggregate(elem, temp2);
-			temp = temp->next;
-			free(temp2);
-		}
-		else temp = temp->next;
+		else
+			temp->food -= food_decrease;
+		if (temp->food <= 0)
+			Take_Chlam_From_Agg(temp,elem);
+		temp = temp->next;
 	}
 	return elem;
-}
+}//Returns the last guy whose components experienced hunger
 
-void patch(Chlamydomonas **head_Chlam, Aggregate **head_Aggregate)
+void patch()
 {
-	/*------------------------------------------------------------------------
-	//
-	// patch
-	// Updates all our individuals
-	//
-	// Takes pointer of the lists
-	// Void function. Modifies the lists though
-	//
-	------------------------------------------------------------------------*/
-
-	if (*head_Aggregate != NULL) {
-		if (rand() % prob_max < prob_disaggregation)
-			*head_Chlam = desaggregate(*head_Chlam, head_Aggregate);
-		*head_Aggregate = hunger_in_aggregate(*head_Aggregate);
-		*head_Aggregate = mitosis_in_aggregate(*head_Aggregate, *head_Aggregate);
-	
-		Aggregate *temp_aggreg = (*head_Aggregate)->next;
+	if (head_aggregate != NULL) {
+		Aggregate *temp_aggreg = head_aggregate;
 		while (temp_aggreg != NULL) {
 			if (rand() % prob_max < prob_disaggregation)
-				*head_Chlam = desaggregate(*head_Chlam, &temp_aggreg);
-			temp_aggreg = hunger_in_aggregate(temp_aggreg);
-			*head_Aggregate = mitosis_in_aggregate(*head_Aggregate, temp_aggreg);
+				temp_aggreg = disaggregation(temp_aggreg);
+			if (temp_aggreg != NULL) {
+				temp_aggreg = hunger_Aggregate(temp_aggreg);
+				if (temp_aggreg != NULL)
+					mitosis_In_Aggreg(temp_aggreg);
+			}
 		}
 	}
 
-	Chlamydomonas *temp = NULL;
-	*head_Chlam = exhaust(*head_Chlam);
-	kill_chlam(head_Chlam);
-	check_change_dir(*head_Chlam);
-	move(*head_Chlam);
-	*head_Aggregate = gathering(*head_Aggregate, head_Chlam, head_Chlam);
-	mitosis(*head_Chlam, *head_Chlam);
-
-	if (*head_Chlam != NULL)
-		temp = (*head_Chlam)->next;
-	while (temp != NULL) {
-		temp = exhaust(temp);
-		kill_chlam(&temp);
-		check_change_dir(temp);
-		move(temp);
-		*head_Aggregate = gathering(*head_Aggregate, head_Chlam, &temp);
-		mitosis(*head_Chlam, temp);
-		if (temp != NULL)
-			temp = temp->next;
+	Chlamydomonas *temp_chlam = head_chlam;
+	while (temp_chlam != NULL) {
+		if (rand() % prob_max < prob_die) {
+			Chlamydomonas *tempo = temp_chlam;
+			temp_chlam = temp_chlam->next;
+			kill_Chlam(tempo);
+		}
+		if (temp_chlam != NULL) {
+			temp_chlam = hunger_Chlamydomonas(temp_chlam);
+			if (temp_chlam != NULL) {
+				check_Change_Dir(temp_chlam);
+				move(temp_chlam);
+				temp_chlam = aggregation(temp_chlam);
+				if (temp_chlam != NULL) {
+					if (temp_chlam->food > 3 && rand() % prob_max < prob_init_clonage)
+						mitosis(temp_chlam);
+				}
+			}
+		}
+		if (temp_chlam != NULL) 
+			temp_chlam = temp_chlam->next;
 	}
 }
 
-/*
-int main()
+void destroy_Chlam(Chlamydomonas *head)
 {
-	init_world();
-	while (getchar() != 'k')
-	{
-		if (getchar() == 'a') {
-			delete_world();
-			init_world();
-		}
-		else  {
-			patch(&head_chlam, &head_aggregate);
-			if (NO_MORE_MEMORY == 1)
-				printf("NO_MORE_MEMORY");
-		}
-	}
-	delete_world();
+	if (head == NULL)
+		return;
+	Chlamydomonas *temp = head->next;
+	free(head);
+	return destroy_Chlam(temp);
 }
-*/
+
+void destroy_Aggreg(Aggregate *list)
+{
+	if (list == NULL)
+		return;
+	destroy_Chlam(list->head);
+	Aggregate *temp = list->next;
+	free(list);
+	return destroy_Aggreg(temp);
+}
+
+void delete_World()
+{
+	destroy_Chlam(head_chlam);
+	destroy_Aggreg(head_aggregate);
+}
+
+void init_World()
+{
+	head_chlam = NULL;
+	head_aggregate = NULL;
+
+	for (int i = 0; i < NB_INIT; i++) {
+		add_Chlam(create_Chlam((rand() % (XMAX - XMIN + 1) + XMIN), (rand() % (YMAX - YMIN + 1) + YMIN), (rand() % (ZMAX - ZMIN + 1) + ZMIN), FOOD_INIT));
+	}
+	Chlamydomonas *temp = head_chlam;
+	while (temp != NULL) {
+		printf("%d %d %d |  %d\n", temp->x, temp->y, temp->z, temp->food);
+		temp = temp->next;
+	}
+	printf("\n\n");
+}
+
+//Si on passe par un des process, temp = le return de ce process

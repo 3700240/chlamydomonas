@@ -6,7 +6,6 @@
 #include "structures.h"
 #include "headers.h"
 
-extern Numb_per_coord numb_per_coord;
 extern Chlamydomonas *head_chlam;
 extern Aggregate *head_aggregate;
 
@@ -20,7 +19,7 @@ int YMIN = 1;
 int YMAX = 30;
 int ZMIN = 1;
 int ZMAX = 30;
-int NB_INIT = 2000;
+int NB_INIT = 10;
 int FOOD_INIT = 15;
 float DIST_AGGREGATE = 1.0;
 int food_increase = 2;
