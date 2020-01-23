@@ -1,6 +1,5 @@
 #include <math.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "globales.h"
 #include "structures.h"
@@ -104,6 +103,17 @@ Aggregate *create_Aggreg(Chlamydomonas *center)
 		delete_World();
 		return NULL;
 	}
+	if (center == head_chlam) {
+		head_chlam = center->next;
+		if (head_chlam != NULL)
+			head_chlam->prev = NULL;
+	}
+	else {
+		center->prev->next = center->next;
+		if (center->next != NULL)
+			center->next->prev = center->prev;
+	}
+	center->next = center->prev = NULL;
 	new->number = 1;
 	new->center = new->head = center;
 	new->radius = 0;
@@ -481,18 +491,10 @@ Chlamydomonas *aggregation(Chlamydomonas *elem)
 		}
 	}
 
-	Chlamydomonas *tempo = head_chlam;
-	while (tempo != NULL) {
-		printf("%d %d %d | %d\n", tempo->x, tempo->y, tempo->z, tempo->food);
-		tempo = tempo->next;
-	}
-	printf("\n");
 	Chlamydomonas *temp = head_chlam;
 	while (temp != NULL) {
 		if (temp != elem) {
-			if (find_Distance(elem, temp) <= DIST_AGGREGATE && rand() % prob_max < ) {
-				printf("%f;   ",find_Distance(elem,temp));
-				printf("elem : %d %d %d,   temp : %d %d %d\n",elem->x, elem->y, elem->z, temp->x, temp->y, temp->z);
+			if (find_Distance(elem, temp) <= DIST_AGGREGATE && rand() % prob_max < prob_aggregation_between_cells) {
 				if (temp == next) 
 					next = next->next;
 				add_Aggreg(spawn_Aggreg(temp, elem));
@@ -657,15 +659,11 @@ void init_World()
 	head_chlam = NULL;
 	head_aggregate = NULL;
 
+
+
 	for (int i = 0; i < NB_INIT; i++) {
 		add_Chlam(create_Chlam((rand() % (XMAX - XMIN + 1) + XMIN), (rand() % (YMAX - YMIN + 1) + YMIN), (rand() % (ZMAX - ZMIN + 1) + ZMIN), FOOD_INIT));
 	}
-	Chlamydomonas *temp = head_chlam;
-	while (temp != NULL) {
-		printf("%d %d %d |  %d\n", temp->x, temp->y, temp->z, temp->food);
-		temp = temp->next;
-	}
-	printf("\n\n");
 }
 
 //Si on passe par un des process, temp = le return de ce process
