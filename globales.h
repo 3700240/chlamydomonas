@@ -25,7 +25,8 @@ extern int camera_x;
 extern int camera_y;
 extern int camera_z;
 extern char is_tutorial;
-
+extern char is_initiated;
+extern int incrementor;
 
 
 extern int prob_aggregation_between_cells; 

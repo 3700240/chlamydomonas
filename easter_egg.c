@@ -2,7 +2,9 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+
 #include <string.h>
+#include <stdio.h>
 
 extern float temp;
 
@@ -73,15 +75,16 @@ void draw_snowman()
 }
 
 
-void affich_message(unsigned char test) {
+void affich_message(int test) {
 	switch (test) {
 		case 1:
-		   	print_rgb(15.2, 40.865, "Alors tu es arrivée là...?", 0.8, 0.8, 0.8);
-		    print_rgb(15.2, 30.6, "2 patches per time", 0.8, 0.8, 0.8);
-		    print_rgb(15.2, 20.335, "3 patches per time", 0.8, 0.8, 0.8);
-		    print_rgb(15.2, 10.13, "4 patches per time", 0.8, 0.8, 0.8);
-		    print_rgb(15.2, -0.135, "5 patches per time", 0.8, 0.8, 0.8);
-		    print_rgb(15.2, -10.4, "Resume", 0.8, 0.8, 0.8);
+			glMatrixMode(GL_MODELVIEW);
+	  		glLoadIdentity();
+
+  			glTranslatef(-15.5,-15.5,-53);
+
+		   	print_rgb(15.2, 40.865, "Alors tu es arrivee la ?", 0.8, 0.8, 0.8);
+
 			break;
 		case 2:
 			draw_snowman();

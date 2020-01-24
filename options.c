@@ -17,8 +17,9 @@ extern float blue_chlam;
 extern float red_aggr;
 extern float green_aggr;
 extern float blue_aggr;
-extern char is_initiated;
 int pass = 0;
+
+double tempo = 0;
 
 
 
@@ -45,7 +46,10 @@ void KeyboardManagement(unsigned char key, int x, int y)
         case 27:
             if (is_tutorial)
                 is_tutorial = 0; 
-            test_options = 1;
+            if (test_options)
+                test_options = 0;
+            else 
+                test_options = 1;
             glutPostRedisplay();
         //Reset probas = init_stats();
             break;
@@ -187,7 +191,7 @@ void MouseManagement(int button, int state, int x, int y)
                                 glutPostRedisplay();
                             }
                             else {
-                                test_options = 160;
+//                                test_options = 160;
                                 glutPostRedisplay();
                             }
                         }
@@ -728,114 +732,1095 @@ void MouseManagement(int button, int state, int x, int y)
                             }
                         }
                         break;
+                    case 400:
+                        if (((x - 0.5 * xmax)/(0.5 * min) > -0.9) && ((x - 0.5 * xmax)/(0.5 * min) < 0.9)) {
+                            if ((0.5 * ymax - y)/(0.5 * min) > 0.667) {
+                                test_options = 410;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5 * ymax - y)/(0.5 * min) > 0.333) {
+                                test_options = 420;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5*ymax - y)/(0.5 * min) > 0) {
+                                test_options = 430;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5*ymax - y)/(0.5 * min) > -0.333) {
+                                test_options = 440;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5 * ymax - y)/(0.5*min) > -0.67) {
+                                //test_options = 450;
+                                //glutPostRedisplay();
+                            }
+                            else {
+                                //test_options = 460;
+                                //glutPostRedisplay();
+                            }
+                        }
+                        break;
+                    case 600:
+                        if (((x - 0.5 * xmax)/(0.5 * min) > -0.9) && ((x - 0.5 * xmax)/(0.5 * min) < 0.9)) {
+                            if ((0.5 * ymax - y)/(0.5 * min) > 0.75)
+                                test_options = 610;
+                            else if ((0.5 * ymax - y)/(0.5 * min) > 0.5)
+                                test_options = 620;
+                            else if ((0.5 * ymax - y)/(0.5 * min) > 0.25)
+                                test_options = 630;
+                            else if ((0.5 * ymax - y)/(0.5 * min) > 0)
+                                test_options = 640;
+                            else if ((0.5 * ymax - y)/(0.5 * min) > -0.25)
+                                test_options = 650;
+                            else if ((0.5 * ymax - y)/(0.5 * min) > -0.5)
+                                test_options = 660;
+                            else if ((0.5 * ymax - y)/(0.5 * min) > -0.75)
+                                test_options = 670;
+                            else test_options = 680;
+                            glutPostRedisplay();
+                        }
+                        break;
+                    case 601:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1)) {
+                                incrementor = 10;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                prob_aggregation_between_cells -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                prob_aggregation_between_cells += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                prob_aggregation_between_cells = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (prob_aggregation_between_cells < 0)
+                            prob_aggregation_between_cells = 0;
+                        if (prob_aggregation_between_cells > 1000)
+                            prob_aggregation_between_cells = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 602: 
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1)) {
+                                incrementor = 10;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                prob_self_aggregating -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                prob_self_aggregating += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                prob_self_aggregating = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (prob_self_aggregating < 0)
+                            prob_self_aggregating = 0;
+                        if (prob_self_aggregating > 1000)
+                            prob_self_aggregating = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 603:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                dimin_prob_clonage -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                dimin_prob_clonage += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                dimin_prob_clonage = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (dimin_prob_clonage < 0)
+                            dimin_prob_clonage = 0;
+                        if (dimin_prob_clonage > 1000)
+                            dimin_prob_clonage = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 604:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                prob_init_clonage -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                prob_init_clonage += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                prob_init_clonage = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (prob_init_clonage < 0)
+                            prob_init_clonage = 0;
+                        if (prob_init_clonage > 1000)
+                            prob_init_clonage = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 605:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                prob_eat -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                prob_eat += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                prob_eat = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (prob_eat < 0)
+                            prob_eat = 0;
+                        if (prob_eat > 1000)
+                            prob_eat = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 606:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                prob_change_direction -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                prob_change_direction += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                prob_change_direction = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (prob_change_direction < 0)
+                            prob_change_direction = 0;
+                        if (prob_change_direction > 1000)
+                            prob_change_direction = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 607:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                prob_die -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                prob_die += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                prob_die = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (prob_die < 0)
+                            prob_die = 0;
+                        if (prob_die > 1000)
+                            prob_die = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 608:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                prob_disaggregation -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                prob_disaggregation += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                prob_disaggregation = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (prob_disaggregation < 0)
+                            prob_disaggregation = 0;
+                        if (prob_disaggregation > 1000)
+                            prob_disaggregation = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 609:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                XMIN -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                XMIN += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                XMIN = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (XMIN < 0)
+                            XMIN = 0;
+                        if (XMIN > XMAX)
+                            XMIN = XMAX;
+                        glutPostRedisplay();
+                        break;
+                    case 611:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                XMAX -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                XMAX += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                XMAX = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (XMAX < XMIN)
+                            XMAX = XMIN;
+                        if (XMAX > 100)
+                            XMAX = 100;
+                        glutPostRedisplay();
+                        break;
+                    case 612:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                YMIN -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                YMIN += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                YMIN = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (YMIN < 0)
+                            YMIN = 0;
+                        if (YMIN > YMAX)
+                            YMIN = YMAX;
+                        glutPostRedisplay();
+                        break;
+                    case 613:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                YMAX -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                YMAX += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                YMAX = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (YMAX < YMIN)
+                            YMAX = YMIN;
+                        if (YMAX > 1000)
+                            YMAX = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 614:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                ZMIN -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                ZMIN += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                ZMIN = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (ZMIN < 0)
+                            ZMIN = 0;
+                        if (ZMIN > ZMAX)
+                            ZMIN = ZMAX;
+                        glutPostRedisplay();
+                        break;
+                    case 615:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                ZMAX -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                ZMAX += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                ZMAX = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (ZMAX < ZMIN)
+                            ZMAX = ZMIN;
+                        if (ZMAX > 1000)
+                            ZMAX = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 616:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                NB_INIT -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                NB_INIT += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                NB_INIT = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (NB_INIT < 0)
+                            NB_INIT = 0;
+                        if (NB_INIT > 20000)
+                            NB_INIT = 20000;
+                        glutPostRedisplay();
+                        break;
+                    case 617:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                FOOD_INIT -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                FOOD_INIT += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                FOOD_INIT = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (FOOD_INIT < 0)
+                            FOOD_INIT = 0;
+                        if (FOOD_INIT > 1000)
+                            FOOD_INIT = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 618:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                DIST_AGGREGATE -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                DIST_AGGREGATE += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                DIST_AGGREGATE = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (DIST_AGGREGATE < 0)
+                            DIST_AGGREGATE = 0;
+                        if (DIST_AGGREGATE > 10)
+                            DIST_AGGREGATE = 10;
+                        glutPostRedisplay();
+                        break;
+                    case 619:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                food_increase -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                food_increase += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                food_increase = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (food_increase < 0)
+                            food_increase = 0;
+                        if (food_increase > 1000)
+                            food_increase = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 621:
+                        if (((0.5 * ymax - y)/(0.5 * min) > 0.6) && ((0.5 * ymax - y)/(0.5 * min) <= 0.8)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.6) && ((x - 0.5 * xmax)/(0.5 * min) < -0.4)) {
+                                incrementor = 1;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > -0.1) && ((x - 0.5 * xmax)/(0.5 * min) < 0.1))
+                                incrementor = 10;
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.4) && ((x - 0.5 * xmax)/(0.5 * min) < 0.6))
+                                incrementor = 100;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > 0.075) && ((0.5 * ymax - y)/(0.5 * min) <= 0.325)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.625) && ((x - 0.5 * xmax)/(0.5 * min) < -0.375)) {
+                                food_decrease -= incrementor;
+                            }
+                            else if (((x - 0.5 * xmax)/(0.5 * min) > 0.375) && ((x - 0.5 * xmax)/(0.5 * min) < 0.625))
+                                food_decrease += incrementor;
+                        }
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.3)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
+                                //Entrer avec le clavier
+                                scanf("%lf", &tempo);
+                                tempo *= 10;
+                                dimin_prob_clonage = (int) tempo;
+                            }
+                        }
+
+                        else if (((0.5 * ymax - y)/(0.5 * min) > -0.8) && ((0.5 * ymax - y)/(0.5 * min) <= -0.6)) {
+                            if (((x - 0.5 * xmax)/(0.5 * min) > -0.2) && ((x - 0.5 * xmax)/(0.5 * min) < 0.2)) {
+                                test_options = 400;
+                                incrementor = 1;
+                            }
+                        }
+                        if (food_decrease < 0)
+                            food_decrease = 0;
+                        if (food_decrease > 1000)
+                            food_decrease = 1000;
+                        glutPostRedisplay();
+                        break;
+                    case 700: 
+                        if (((x - 0.5 * xmax)/(0.5 * min) > -0.9) && ((x - 0.5 * xmax)/(0.5 * min) < 0.9)) {
+                            if ((0.5 * ymax - y)/(0.5 * min) > 0.667) {
+                                test_options = 710;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5 * ymax - y)/(0.5 * min) > 0.333) {
+                                test_options = 720;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5*ymax - y)/(0.5 * min) > 0) {
+                                test_options = 730;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5*ymax - y)/(0.5 * min) > -0.333) {
+                                test_options = 740;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5 * ymax - y)/(0.5*min) > -0.67) {
+                                test_options = 750;
+                                glutPostRedisplay();
+                            }
+                            else {
+                                test_options = 760;
+                                glutPostRedisplay();
+                            }
+                        }
+                        break;
+                    case 800:
+                        if (((x - 0.5 * xmax)/(0.5 * min) > -0.9) && ((x - 0.5 * xmax)/(0.5 * min) < 0.9)) {
+                            if ((0.5 * ymax - y)/(0.5 * min) > 0.667) {
+                                test_options = 810;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5 * ymax - y)/(0.5 * min) > 0.333) {
+                                test_options = 820;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5*ymax - y)/(0.5 * min) > 0) {
+                                test_options = 830;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5*ymax - y)/(0.5 * min) > -0.333) {
+                                test_options = 840;
+                                glutPostRedisplay();
+                            }
+                            else if ((0.5 * ymax - y)/(0.5*min) > -0.67) {
+                                test_options = 850;
+                                glutPostRedisplay();
+                            }
+                            else {
+//                                test_options = 160;
+//                                glutPostRedisplay();
+                            }
+                        }
+                        break;
                 }
             }
             else if (state == GLUT_UP) {
                 if (((x - 0.5 * xmax)/(0.5 * min) > -0.9) && ((x - 0.5 * xmax)/(0.5 * min) < 0.9)) {
-                    if ((0.5 * ymax - y)/(0.5 * min) > 0.667) {
-                        switch (test_options) {
-                            case 11: if (is_initiated) delete_World();
-                                glutDestroyWindow(id_window);
-                                break;
-                            case 110: test_options = 302;
-                                glutPostRedisplay();
-                                break;
-                            case 210: patches_per_draw = 1;
-                                test_options = 0;
-                                glutPostRedisplay();
-                                break;
-                            default: test_options = test_options - test_options % 100 + test_options % 10;
-                                glutPostRedisplay();
-                        }
-                    }
-                    else if ((0.5 * ymax - y)/(0.5 * min) > 0.333) {
-                        switch (test_options) {
-                            case 21: if (is_initiated)
+                    switch (test_options) {
+                        case 11: if ((0.5 * ymax - y)/(0.5 * min) > 0.667) {
+                                if (is_initiated)
+                                    delete_World();
+                            }
+                            else test_options = 1;
+                            glutDestroyWindow(id_window);
+                            break;
+                        case 21: if (((0.5 * ymax - y)/(0.5 * min) > 0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0.667)) {
+                                if (is_initiated)
                                     delete_World();
                                 init_World();
                                 is_initiated = 1;
                                 test_options = 0;
-                                glutPostRedisplay();
-                                break;
-                            case 120: test_options = 301;
-                                glutPostRedisplay();
-                                break;
-                            case 220: patches_per_draw = 2;
+                            }
+                            else test_options = 1;
+                            glutPostRedisplay();
+                            break;
+                        case 31: if (((0.5 * ymax - y)/(0.5 * min) > 0) && ((0.5 * ymax - y)/(0.5 * min) <= 0.333)) {
+                                test_options = 100;
+                            }
+                            else test_options = 1;
+                            glutPostRedisplay();
+                            break;
+                        case 41: if (((0.5 * ymax - y)/(0.5 * min) > -0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0)) {
+                                is_tutorial = 1;
+                            }
+                            else test_options = 1;
+                            glutPostRedisplay();
+                            break;
+                        case 51: if (((0.5 * ymax - y)/(0.5 * min) > -0.667) && ((0.5 * ymax - y)/(0.5 * min) <= -0.333)) {
                                 test_options = 0;
-                                glutPostRedisplay();
-                                break;
-                            default: test_options = test_options - test_options % 100 + test_options % 10;
-                                glutPostRedisplay();
-                        }
-                    }
-                    else if ((0.5 * ymax - y)/(0.5 * min) > 0) {
-                        switch (test_options) {
-                            case 31: test_options = 100;
-                                glutPostRedisplay();
-                                break;
-                            case 130: //PROBS
-                                test_options = 400;
-                                glutPostRedisplay();
-                                break;
-                            case 230: patches_per_draw = 3;
-                                test_options = 0;
-                                glutPostRedisplay();
-                                break;
-                            default: test_options = test_options - test_options % 100 + test_options % 10;
-                                glutPostRedisplay();
-                        }
-                    }
-                    else if ((0.5 * ymax - y)/(0.5 * min) > -0.333) {
-                        switch (test_options) {
-                            case 41: is_tutorial = 1;
-                                glutPostRedisplay();
-                                break;
-                            case 140: //Patches per draw
-                            test_options = 200;
-                                glutPostRedisplay();
-                                break;
-                            case 240: patches_per_draw = 4;
-                                test_options = 0;
-                                glutPostRedisplay();
-                                break;
-                            default: test_options = test_options - test_options % 100 + test_options % 10;
-                                glutPostRedisplay();
-                        }
-                    }
-                    else if ((0.5 * ymax - y)/(0.5 * min) > -0.667) {
-                        switch (test_options) {
-                            case 51: test_options = 0;
                                 //Resume
-                                glutPostRedisplay();
-                                break;
-                            case 150: //OPTION 5
-                                glutPostRedisplay();
-                                break;
-                            case 250: patches_per_draw = 5;
+                            }
+                            else test_options = 1;
+                            glutPostRedisplay();
+                            break;
+                        case 110: if ((0.5 * ymax - y)/(0.5 * min) > 0.667) {
+                                test_options = 302;
+                            }
+                            else test_options = 100;
+                            glutPostRedisplay();
+                            break;
+                        case 120: if (((0.5 * ymax - y)/(0.5 * min) > 0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0.667)) {
+                                test_options = 301;
+                            }
+                            else test_options = 100;
+                            glutPostRedisplay();
+                            break;
+                        case 130: if (((0.5 * ymax - y)/(0.5 * min) > 0) && ((0.5 * ymax - y)/(0.5 * min) <= 0.333)) {
+                                //Probs
+                                test_options = 400;
+                            }
+                            else test_options = 100;
+                            glutPostRedisplay();
+                            break;
+                        case 140: if (((0.5 * ymax - y)/(0.5 * min) > -0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0)) {
+                                //Patches per draw
+                                test_options = 200;
+                            }
+                            else test_options = 100;
+                            glutPostRedisplay();
+                            break;
+                        case 150: if (((0.5 * ymax - y)/(0.5 * min) > -0.667) && ((0.5 * ymax - y)/(0.5 * min) <= -0.333)) {
+                                //Resume 
+                                test_options = 1;
+                            }
+                            else test_options = 100;
+                            glutPostRedisplay();
+                            break;
+                        case 160: if ((0.5 * ymax - y)/(0.5 * min) <= -0.667) {
+                                test_options = 1;
+                            }
+                            else test_options = 100;
+                            glutPostRedisplay();
+                            break;
+                        case 210: if ((0.5 * ymax - y)/(0.5 * min) > 0.667) {
+                                patches_per_draw = 1;
                                 test_options = 0;
-                                glutPostRedisplay();
-                                break;
-                            default: test_options = test_options - test_options % 100 + test_options % 10;
-                                glutPostRedisplay();
-                        }
-                    }
-                    else {
-                        switch (test_options) {
-                        case 160: test_options = 1;
+                            }
+                            else test_options = 200;
                             glutPostRedisplay();
                             break;
-                        case 260: test_options = 100;
+                        case 220: if (((0.5 * ymax - y)/(0.5 * min) > 0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0.667)) {
+                                patches_per_draw = 2;
+                                test_options = 0;
+                            }
+                            else test_options = 200;
                             glutPostRedisplay();
                             break;
-                        default: test_options = test_options - (test_options % 100) + (test_options % 10);
+                        case 230: if (((0.5 * ymax - y)/(0.5 * min) > 0) && ((0.5 * ymax - y)/(0.5 * min) <= 0.333)) {
+                                patches_per_draw = 3;
+                                test_options = 0;
+                            }
+                            else test_options = 200;
                             glutPostRedisplay();
-                        }
+                            break;
+                        case 240: if (((0.5 * ymax - y)/(0.5 * min) > -0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0)) {
+                                patches_per_draw = 4;
+                                test_options = 0;
+                            }
+                            else test_options = 200;
+                            glutPostRedisplay();
+                            break;
+                        case 250: if (((0.5 * ymax - y)/(0.5 * min) > -0.667) && ((0.5 * ymax - y)/(0.5 * min) <= -0.333)) {
+                                patches_per_draw = 5;
+                                test_options = 0;
+                            }
+                            else test_options = 200;
+                            glutPostRedisplay();
+                            break;
+                        case 260: if ((0.5 * ymax - y)/(0.5 * min) <= -0.667) {
+                                test_options = 100;
+                            }
+                            else test_options = 200;
+                            glutPostRedisplay();
+                            break;
+                        case 410: if ((0.5 * ymax - y)/(0.5 * min) > 0.667) {
+                                test_options = 600;
+                            }
+                            else test_options = 400;
+                            glutPostRedisplay();
+                            break;
+                        case 420: if (((0.5 * ymax - y)/(0.5 * min) > 0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0.667)) {
+                                test_options = 700;
+                            }
+                            else test_options = 400;
+                            glutPostRedisplay();
+                            break;
+                        case 430: if (((0.5 * ymax - y)/(0.5 * min) > 0) && ((0.5 * ymax - y)/(0.5 * min) <= 0.333)) {
+                                test_options = 800;
+                            }
+                            else test_options = 400;
+                            glutPostRedisplay();
+                            break;
+                        case 440: if (((0.5 * ymax - y)/(0.5 * min) > -0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0)) {
+                                //FACTORY RESET;
+                            }
+                            else test_options = 400;
+                            glutPostRedisplay();
+                            break;
+                        case 450: if (((0.5 * ymax - y)/(0.5 * min) > -0.667) && ((0.5 * ymax - y)/(0.5 * min) <= -0.333)) {
+                                test_options = 100;
+                            }
+                            else test_options = 400;
+                            glutPostRedisplay();
+                            break;
+                        case 610: if ((0.5 * ymax - y)/(0.5 * min) > 0.75) 
+                                    test_options = 601;
+                            else test_options = 600;
+                            glutPostRedisplay();
+                            break;
+                        case 620 : if (((0.5 * ymax - y)/(0.5 * min) > 0.5) && ((0.5 * ymax - y)/(0.5 * min) <= 0.75))
+                                test_options = 602;
+                            else test_options = 600;
+                            glutPostRedisplay();
+                            break;
+                        case 630: if (((0.5 * ymax - y)/(0.5 * min) > 0.25) && ((0.5 * ymax - y)/(0.5 * min) <= 0.5))
+                                test_options = 603;
+                            else test_options = 600;
+                            glutPostRedisplay();
+                            break;
+                        case 640: if (((0.5 * ymax - y)/(0.5 * min) > 0) && ((0.5 * ymax - y)/(0.5 * min) <= 0.25))
+                                test_options = 604;
+                            else test_options = 600;
+                            glutPostRedisplay();
+                            break;
+                        case 650: if (((0.5 * ymax - y)/(0.5 * min) > -0.25) && ((0.5 * ymax - y)/(0.5 * min) <= 0))
+                                test_options = 605;
+                            else test_options = 600;
+                            glutPostRedisplay();
+                            break;
+                        case 660: if (((0.5 * ymax - y)/(0.5 * min) > -0.5) && ((0.5 * ymax - y)/(0.5 * min) <= -0.25))
+                                test_options = 606;
+                            else test_options = 600;
+                            glutPostRedisplay();
+                            break;
+                        case 670: if (((0.5 * ymax - y)/(0.5 * min) > -0.75) && ((0.5 * ymax - y)/(0.5 * min) <= -0.5))
+                                test_options = 607;
+                            else test_options = 600;
+                            glutPostRedisplay();
+                            break;
+                        case 680: if ((0.5 * ymax - y)/(0.5 * min) <= -0.75)
+                                test_options = 608;
+                            else test_options = 600;
+                            glutPostRedisplay();
+                            break;
+                        case 710: if ((0.5 * ymax - y)/(0.5 * min) > 0.667) {
+                                test_options = 609;
+                            }
+                            else test_options = 700;
+                            glutPostRedisplay();
+                            break;
+                        case 720: if (((0.5 * ymax - y)/(0.5 * min) > 0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0.667)) {
+                                test_options = 611;
+                            }
+                            else test_options = 700;
+                            glutPostRedisplay();
+                            break;
+                        case 730: if (((0.5 * ymax - y)/(0.5 * min) > 0) && ((0.5 * ymax - y)/(0.5 * min) <= 0.333)) {
+                                test_options = 612;
+                            }
+                            else test_options = 700;
+                            glutPostRedisplay();
+                            break;
+                        case 740: if (((0.5 * ymax - y)/(0.5 * min) > -0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0)) {
+                                test_options = 613;
+                            }
+                            else test_options = 700;
+                            glutPostRedisplay();
+                            break;
+                        case 750: if (((0.5 * ymax - y)/(0.5 * min) > -0.667) && ((0.5 * ymax - y)/(0.5 * min) <= -0.333)) {
+                                test_options = 614;
+                            }
+                            else test_options = 700;
+                            glutPostRedisplay();
+                            break;
+                        case 760: if ((0.5 * ymax - y)/(0.5 * min) <= -0.667) {
+                                test_options = 615;
+                            }
+                            else test_options = 700;
+                            glutPostRedisplay();
+                            break;
+                        case 810: if ((0.5 * ymax - y)/(0.5 * min) > 0.667) {
+                                test_options = 616;
+                            }
+                            else test_options = 800;
+                            glutPostRedisplay();
+                            break;
+                        case 820: if (((0.5 * ymax - y)/(0.5 * min) > 0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0.667)) {
+                                test_options = 617;
+                            }
+                            else test_options = 800;
+                            glutPostRedisplay();
+                            break;
+                        case 830: if (((0.5 * ymax - y)/(0.5 * min) > 0) && ((0.5 * ymax - y)/(0.5 * min) <= 0.333)) {
+                                test_options = 618;
+                            }
+                            else test_options = 800;
+                            glutPostRedisplay();
+                            break;
+                        case 840: if (((0.5 * ymax - y)/(0.5 * min) > -0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0)) {
+                                test_options = 619;
+                            }
+                            else test_options = 800;
+                            glutPostRedisplay();
+                            break;
+                        case 850: if (((0.5 * ymax - y)/(0.5 * min) > -0.667) && ((0.5 * ymax - y)/(0.5 * min) <= -0.333)) {
+                                test_options = 621;
+                            }
+                            else test_options = 800;
+                            glutPostRedisplay();
+                            break;
                     }
                 }
-                else {
-                    test_options = test_options - (test_options % 10) + (test_options % 100);
-                    glutPostRedisplay();
-                }
+                else if (test_options)
+                    test_options = test_options - test_options % 100 + test_options % 10;
             }
         }
     }

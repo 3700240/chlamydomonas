@@ -24,7 +24,7 @@ easter_egg.o:	easter_egg.c
 	@ $(CC) $(CFLAGS) -c $(@:.o=.c) $(LOCATEGLUT)
 
 clean:	
-	rm -rf *.o $(NOMAPP)
+	@ rm -rf *.o $(NOMAPP)
 
 
 

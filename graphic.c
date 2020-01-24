@@ -575,11 +575,6 @@ void affich_menu(char option)
 	glEnd();
 }
 
-void affich_change_prob(int temp)
-{
-
-}
-
 void affich_menu_opt1(char option)
 {
 	glMatrixMode(GL_MODELVIEW);
@@ -592,8 +587,7 @@ void affich_menu_opt1(char option)
     print_rgb(15.2, 30.6, "Color aggregate", 0.8, 0.8, 0.8);
     print_rgb(15.2, 20.335, "Modify probs", 0.8, 0.8, 0.8);
     print_rgb(15.2, 10.13, "Patches per time", 0.8, 0.8, 0.8);
-    print_rgb(15.2, -0.135, "Option 5", 0.8, 0.8, 0.8);
-    print_rgb(15.2, -10.4, "Back", 0.8, 0.8, 0.8);
+    print_rgb(15.2, -0.135, "Back", 0.8, 0.8, 0.8);
 
     switch (option) {
     	case 1:	glColor3f(0.9,0.1,0.1);
@@ -687,7 +681,7 @@ void affich_menu_opt1(char option)
 	glVertex2f(43.4, -5.31);
 	glVertex2f(43.4, 4.95);
 	glEnd();
-
+/*
 	glColor3f(0.2, 0.2, 0.2);
 	glBegin(GL_POLYGON);
 	glVertex2f(-13, -5.31);
@@ -695,7 +689,7 @@ void affich_menu_opt1(char option)
 	glVertex2f(43.4, -15.57);
 	glVertex2f(43.4, -5.31);
 	glEnd();
-
+*/
 
 	//BACKGROUND
 	glColor3f(0.3,0.3,0.3);
@@ -873,10 +867,11 @@ void which_param(char option)
 	glTranslatef(-15.5,-15.5,-53);
 
 
-   	print_rgb(15.2, 40.865, "PROBS", 0.8, 0.8, 0.8);
-    print_rgb(15.2, 30.6, "MODEL SIZE", 0.8, 0.8, 0.8);
-    print_rgb(15.2, 20.335, "EXPERIMENT DATA", 0.8, 0.8, 0.8); //ADD A FACTORY RESET //ADD A BACK BUTTON
-    print_rgb(15.2, 10.13, "Back", 0.8, 0.8, 0.8);
+   	print_rgb(15.2, 40.865, "probabilities", 0.8, 0.8, 0.8);
+    print_rgb(15.2, 30.6, "Experiment size", 0.8, 0.8, 0.8);
+    print_rgb(15.2, 20.335, "Experiment parameters", 0.8, 0.8, 0.8); //ADD A FACTORY RESET //ADD A BACK BUTTON
+    print_rgb(15.2, 10.13, "Reset all values", 0.8, 0.8, 0.8);
+    print_rgb(15.2, -0.135, "Back", 0.8, 0.8, 0.8);
 
     switch (option) {
     	case 1:	glColor3f(0.9,0.1,0.1);
@@ -886,7 +881,7 @@ void which_param(char option)
 			glVertex2f(43.4, 35.73);
 			glVertex2f(43.4, 46);
 			glEnd();
-		break;
+			break;
 		case 2:	glColor3f(0.9, 0.1, 0.1);
 			glBegin(GL_POLYGON);
 			glVertex2f(-13, 35.73);
@@ -894,7 +889,7 @@ void which_param(char option)
 			glVertex2f(43.4, 25.47);
 			glVertex2f(43.4, 35.73);
 			glEnd();
-		break;
+			break;
 		case 3:	glColor3f(0.9,0.1,0.1);
 			glBegin(GL_POLYGON);
 			glVertex2f(-13, 25.47);
@@ -902,7 +897,7 @@ void which_param(char option)
 			glVertex2f(43.4, 15.21);
 			glVertex2f(43.4, 25.47);
 			glEnd();
-		break;
+			break;
 		case 4:	glColor3f(0.9, 0.1, 0.1);
 			glBegin(GL_POLYGON);
 			glVertex2f(-13, 15.21);
@@ -910,7 +905,15 @@ void which_param(char option)
 			glVertex2f(43.4, 4.95);
 			glVertex2f(43.4, 15.21);
 			glEnd();
-		break;
+			break;
+		case 5:	glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, 4.95);
+			glVertex2f(-13, -5.31);
+			glVertex2f(43.4, -5.31);
+			glVertex2f(43.4, 4.95);
+			glEnd();
+			break;
 	}
 
 	// -15.6 // 46
@@ -946,6 +949,14 @@ void which_param(char option)
 	glVertex2f(43.4, 15.21);
 	glEnd();
 
+	glColor3f(0.18, 0.18, 0.18);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, 4.95);
+	glVertex2f(-13, -5.31);
+	glVertex2f(43.4, -5.31);
+	glVertex2f(43.4, 4.95);
+	glEnd();
+
 
 
 	//BACKGROUND
@@ -971,8 +982,166 @@ void which_prob_param(char option)
     print_rgb(15.2, 19.05, "Probability of mitosis when alone", 0.8, 0.8, 0.8);
     print_rgb(15.2, 11.35, "Probability to get nutrients from environment", 0.8, 0.8, 0.8);
 	print_rgb(15.2, 3.65, "Probability to change direction each time iteration", 0.8, 0.8, 0.8);
-	print_rgb(15.2, -11.75, "Probability for an aggregate to disaggregate", 0.8, 0.8, 0.8);
 	print_rgb(15.2, -4.05, "Probability to die from stress", 0.8, 0.8, 0.8);
+	print_rgb(15.2, -11.75, "Probability for an aggregate to disaggregate", 0.8, 0.8, 0.8);
+
+    switch (option) {
+    	case 1:	glColor3f(0.9,0.1,0.1);
+		   	glBegin(GL_POLYGON);
+			glVertex2f(-13, 46);
+			glVertex2f(-13, 38.3);
+			glVertex2f(43.4, 38.3);
+			glVertex2f(43.4, 46);
+			glEnd();
+			break;
+		case 2:	glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, 38.3);
+			glVertex2f(-13, 30.60);
+			glVertex2f(43.4, 30.6);
+			glVertex2f(43.4, 38.3);
+			glEnd();
+			break;
+		case 3:	glColor3f(0.9,0.1,0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, 30.6);
+			glVertex2f(-13, 22.9);
+			glVertex2f(43.4, 22.9);
+			glVertex2f(43.4, 30.6);
+			glEnd();
+			break;
+		case 4:	glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, 22.9);
+			glVertex2f(-13, 15.20);
+			glVertex2f(43.4, 15.20);
+			glVertex2f(43.4, 22.9);
+			glEnd();
+			break;
+		case 5:glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, 15.2);
+			glVertex2f(-13, 7.5);
+			glVertex2f(43.4, 7.5);
+			glVertex2f(43.4, 15.2);
+			glEnd();
+			break;
+		case 6:glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, 7.5);
+			glVertex2f(-13, -0.2);
+			glVertex2f(43.4, -0.2);
+			glVertex2f(43.4, 7.5);
+			glEnd();
+			break;
+		case 7:glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, -0.2);
+			glVertex2f(-13, -7.9);
+			glVertex2f(43.4, -7.9);
+			glVertex2f(43.4, -0.2);
+			glEnd();
+			break;
+		case 8:glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, -7.9);
+			glVertex2f(-13, -15.6);
+			glVertex2f(43.4, -15.60);
+			glVertex2f(43.4, -7.9);
+			glEnd();
+			break;
+	}
+
+	// -15.6 // 46
+	glColor3f(0.1,0.1,0.1);
+   	glBegin(GL_POLYGON);
+	glVertex2f(-13, 46);
+	glVertex2f(-13, 38.3);
+	glVertex2f(43.4, 38.3);
+	glVertex2f(43.4, 46);
+	glEnd();
+
+	glColor3f(0.12, 0.12, 0.12);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, 38.3);
+	glVertex2f(-13, 30.60);
+	glVertex2f(43.4, 30.6);
+	glVertex2f(43.4, 38.3);
+	glEnd();
+
+	glColor3f(0.14,0.14,0.14);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, 30.6);
+	glVertex2f(-13, 22.9);
+	glVertex2f(43.4, 22.9);
+	glVertex2f(43.4, 30.6);
+	glEnd();
+
+	glColor3f(0.16, 0.16, 0.16);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, 22.9);
+	glVertex2f(-13, 15.20);
+	glVertex2f(43.4, 15.20);
+	glVertex2f(43.4, 22.9);
+	glEnd();
+
+	glColor3f(0.18, 0.18, 0.18);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, 15.2);
+	glVertex2f(-13, 7.5);
+	glVertex2f(43.4, 7.5);
+	glVertex2f(43.4, 15.2);
+	glEnd();
+
+	glColor3f(0.2, 0.2, 0.2);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, 7.5);
+	glVertex2f(-13, -0.2);
+	glVertex2f(43.4, -0.2);
+	glVertex2f(43.4, 7.5);
+	glEnd();
+
+	glColor3f(0.22, 0.22, 0.22);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, -0.2);
+	glVertex2f(-13, -7.9);
+	glVertex2f(43.4, -7.9);
+	glVertex2f(43.4, -0.2);
+	glEnd();
+
+	glColor3f(0.24, 0.24, 0.24);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, -7.9);
+	glVertex2f(-13, -15.6);
+	glVertex2f(43.4, -15.6);
+	glVertex2f(43.4, -7.9);
+	glEnd();
+
+
+
+	//BACKGROUND
+	glColor3f(0.3,0.3,0.3);
+	glBegin(GL_POLYGON);
+	glVertex2f(-15.6, 46);
+	glVertex2f(-15.6, -15.6);
+	glVertex2f(46, -15.6);
+	glVertex2f(46, 46);
+	glEnd();
+}
+
+void which_model_param(char option)
+{
+	glMatrixMode(GL_MODELVIEW);
+  	glLoadIdentity();
+
+	glTranslatef(-15.5,-15.5,-53);
+
+   	print_rgb(15.2, 40.865, "Minimal value for X", 0.8, 0.8, 0.8);
+    print_rgb(15.2, 30.6, "Maximal value for X", 0.8, 0.8, 0.8);
+    print_rgb(15.2, 20.335, "Minimal value for Y", 0.8, 0.8, 0.8);
+    print_rgb(15.2, 10.13, "Maximal value for Y", 0.8, 0.8, 0.8);
+    print_rgb(15.2, -0.135, "Minimal value for Z", 0.8, 0.8, 0.8);
+    print_rgb(15.2, -10.4, "Maximal value for Z", 0.8, 0.8, 0.8);
 
     switch (option) {
     	case 1:	glColor3f(0.9,0.1,0.1);
@@ -1008,14 +1177,24 @@ void which_prob_param(char option)
 			glEnd();
 		break;
 		case 5:
-			break;
-		case 6:
-			break;
-		case 7:
-			break;
-		case 8:
-			break;
-	}
+			glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, 4.95);
+			glVertex2f(-13, -5.31);
+			glVertex2f(43.4, -5.31);
+			glVertex2f(43.4, 4.95);
+			glEnd();
+		break;
+		case 6:	glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, -5.31);
+			glVertex2f(-13, -15.57);
+			glVertex2f(43.4, -15.57);
+			glVertex2f(43.4, -5.31);
+			glEnd();
+		break;
+    }
+
 
 	// -15.6 // 46
 	glColor3f(0.1,0.1,0.1);
@@ -1050,6 +1229,133 @@ void which_prob_param(char option)
 	glVertex2f(43.4, 15.21);
 	glEnd();
 
+	glColor3f(0.18, 0.18, 0.18);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, 4.95);
+	glVertex2f(-13, -5.31);
+	glVertex2f(43.4, -5.31);
+	glVertex2f(43.4, 4.95);
+	glEnd();
+
+	glColor3f(0.2, 0.2, 0.2);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, -5.31);
+	glVertex2f(-13, -15.57);
+	glVertex2f(43.4, -15.57);
+	glVertex2f(43.4, -5.31);
+	glEnd();
+
+
+
+	//BACKGROUND
+	glColor3f(0.3,0.3,0.3);
+	glBegin(GL_POLYGON);
+	glVertex2f(-15.6, 46);
+	glVertex2f(-15.6, -15.6);
+	glVertex2f(46, -15.6);
+	glVertex2f(46, 46);
+	glEnd();
+}
+
+void which_exp_param(char option)
+{
+	glMatrixMode(GL_MODELVIEW);
+  	glLoadIdentity();
+
+	glTranslatef(-15.5,-15.5,-53);
+
+   	print_rgb(15.2, 40.865, "Number of Chlamydomonas to start the experiment", 0.8, 0.8, 0.8);
+    print_rgb(15.2, 30.6, "Energy to start with", 0.8, 0.8, 0.8);
+    print_rgb(15.2, 20.335, "Distance at which they enter an aggregate", 0.8, 0.8, 0.8);
+    print_rgb(15.2, 10.13, "Energy increase when successful getting nutrients", 0.8, 0.8, 0.8);
+    print_rgb(15.2, -0.135, "Energy decrease when failed getting nutrients", 0.8, 0.8, 0.8);
+
+    switch (option) {
+    	case 1:	glColor3f(0.9,0.1,0.1);
+		   	glBegin(GL_POLYGON);
+			glVertex2f(-13, 46);
+			glVertex2f(-13, 35.73);
+			glVertex2f(43.4, 35.73);
+			glVertex2f(43.4, 46);
+			glEnd();
+		break;
+		case 2:	glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, 35.73);
+			glVertex2f(-13, 25.47);
+			glVertex2f(43.4, 25.47);
+			glVertex2f(43.4, 35.73);
+			glEnd();
+		break;
+		case 3:	glColor3f(0.9,0.1,0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, 25.47);
+			glVertex2f(-13, 15.21);
+			glVertex2f(43.4, 15.21);
+			glVertex2f(43.4, 25.47);
+			glEnd();
+		break;
+		case 4:	glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, 15.21);
+			glVertex2f(-13, 4.95);
+			glVertex2f(43.4, 4.95);
+			glVertex2f(43.4, 15.21);
+			glEnd();
+		break;
+		case 5:
+			glColor3f(0.9, 0.1, 0.1);
+			glBegin(GL_POLYGON);
+			glVertex2f(-13, 4.95);
+			glVertex2f(-13, -5.31);
+			glVertex2f(43.4, -5.31);
+			glVertex2f(43.4, 4.95);
+			glEnd();
+		break;
+    }
+
+
+	// -15.6 // 46
+	glColor3f(0.1,0.1,0.1);
+   	glBegin(GL_POLYGON);
+	glVertex2f(-13, 46);
+	glVertex2f(-13, 35.73);
+	glVertex2f(43.4, 35.73);
+	glVertex2f(43.4, 46);
+	glEnd();
+
+	glColor3f(0.12, 0.12, 0.12);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, 35.73);
+	glVertex2f(-13, 25.47);
+	glVertex2f(43.4, 25.47);
+	glVertex2f(43.4, 35.73);
+	glEnd();
+
+	glColor3f(0.14,0.14,0.14);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, 25.47);
+	glVertex2f(-13, 15.21);
+	glVertex2f(43.4, 15.21);
+	glVertex2f(43.4, 25.47);
+	glEnd();
+
+	glColor3f(0.16, 0.16, 0.16);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, 15.21);
+	glVertex2f(-13, 4.95);
+	glVertex2f(43.4, 4.95);
+	glVertex2f(43.4, 15.21);
+	glEnd();
+
+	glColor3f(0.18, 0.18, 0.18);
+	glBegin(GL_POLYGON);
+	glVertex2f(-13, 4.95);
+	glVertex2f(-13, -5.31);
+	glVertex2f(43.4, -5.31);
+	glVertex2f(43.4, 4.95);
+	glEnd();
+
 
 
 	//BACKGROUND
@@ -1069,27 +1375,27 @@ void modif_param(int parameter)
 
 	glTranslatef(-15.5,-15.5,-53);
 
-	print_rgb(-0.2, 15.2, "-", 0.8, 0.8, 0.8);
-	print_rgb(30.6, 15.2, "+", 0.8, 0.8, 0.8);
+	print_rgb(-0.2, 21.36, "-", 0.8, 0.8, 0.8);
+	print_rgb(30.6, 21.36, "+", 0.8, 0.8, 0.8);
 
 	glColor3f(0.2,0.2,0.2);
 	glBegin(GL_POLYGON);
-	glVertex2f(-7.9, 7.6);
-	glVertex2f(-7.9, 23);
-	glVertex2f(7.5, 23);
-	glVertex2f(7.4, 7.6);
-	glEnd(); // 25% +- 12.5% // 50% +- 12.5%
+	glVertex2f(-4.05, 17.71);
+	glVertex2f(-4.05, 25.01);
+	glVertex2f(3.65, 25.01);
+	glVertex2f(3.65, 17.71);
+	glEnd(); // 25% +- 6.25% // 60% +- 6.25%
 
 	glBegin(GL_POLYGON);
-	glVertex2f(22.9, 7.6);
-	glVertex2f(22.9, 23);
-	glVertex2f(38.3, 23);
-	glVertex2f(38.3, 7.6);
-	glEnd(); // 75% +- 12.5% // 50% +- 12.5%
+	glVertex2f(26.75, 17.71);
+	glVertex2f(26.75, 25.01);
+	glVertex2f(34.45, 25.01);
+	glVertex2f(34.45, 17.71);
+	glEnd(); // 75% +- 6.25% // 60% +- 6.25%
 	
-	float temp = 0;
+	double temp = 0;
 	char string[10];
-	char *ptr = NULL;
+	char test = 1;
 
 	switch (parameter) {
 		case 1: //prob_aggregation_between_cells
@@ -1127,26 +1433,32 @@ void modif_param(int parameter)
 		case 9://XMIN;
 			print_rgb(15.2, 30, "Minimal value for X", 0.8, 0.8, 0.8);
 			temp = XMIN;
+			test = 0;
 			break;
 		case 10: //XMAX;
 			print_rgb(15.2, 30, "Maximal value for X", 0.8, 0.8, 0.8);
 			temp = XMAX;
+			test = 0;
 			break;
 		case 11: //YMIN;
 			print_rgb(15.2, 30, "Minimal value for Y", 0.8, 0.8, 0.8);
 			temp = YMIN;
+			test = 0;
 			break;
 		case 12: //YMAX;
 			print_rgb(15.2, 30, "Maximal value for Y", 0.8, 0.8, 0.8);
 			temp = YMAX;
+			test = 0;
 			break;
 		case 13: //ZMIN;
 			print_rgb(15.2, 30, "Minimal value for Z", 0.8, 0.8, 0.8);
 			temp = ZMIN;
+			test = 0;
 			break;
 		case 14: //ZMAX;
 			print_rgb(15.2, 30, "Maximal value for Z", 0.8, 0.8, 0.8);
 			temp = ZMAX;
+			test = 0;
 			break;
 		case 15: //NB_INIT;
 			print_rgb(15.2, 30, "Number of Chlamydomonas to start the experiment", 0.8, 0.8, 0.8);
@@ -1155,27 +1467,93 @@ void modif_param(int parameter)
 		case 16: //FOOD_INIT;
 			print_rgb(15.2, 30, "Energy to start with", 0.8, 0.8, 0.8);
 			temp = FOOD_INIT;
+			test = 0;
 			break;
 		case 17: //DIST_AGGREGATE;
 			print_rgb(15.2, 30, "Distance at which they enter an aggregate", 0.8, 0.8, 0.8);
 			temp = DIST_AGGREGATE;
+			test = 0;
 			break;
 		case 18: //food_increase;
 			print_rgb(15.2, 30, "Energy increase when successful getting nutrients", 0.8, 0.8, 0.8);
 			temp = food_increase;
+			test = 0;
 			break;
 		case 19: //food_decrease;
 			print_rgb(15.2, 30, "Energy decrease when failed getting nutrients", 0.8, 0.8, 0.8);
 			temp = food_decrease;
+			test = 0;
 			break;
 	}
 
-	sprintf(string, "%f", temp);
-	ptr = strchr(string, '.');
-	if (ptr != NULL)
-		*(ptr + 2) = '\0';
-	print_rgb(15.2, 15.2, string, 0.8, 0.8, 0.8);
 
+	if (test) {
+		print_rgb(-0.2, 36.76, "+/-0.1%", 0.8,0.8,0.8);//AFFICHER LES BOUTONS DE MODIF D'incrementor
+		print_rgb(15.2, 36.76, "+/-1%", 0.8, 0.8, 0.8);
+		print_rgb(30.6, 36.76, "+/-10%", 0.8, 0.8, 0.8);
+
+		sprintf(string, "%.1lf%%", temp);
+	}
+	else {
+		print_rgb(-0.2, 36.76, "+/-1", 0.8,0.8,0.8);//AFFICHER LES BOUTONS DE MODIF D'incrementor
+		print_rgb(15.2, 36.76, "+/-10", 0.8, 0.8, 0.8);
+		print_rgb(30.6, 36.76, "+/-100", 0.8, 0.8, 0.8);
+
+		sprintf(string, "%d", (int) temp);
+	}
+	print_rgb(15.2, 20, string, 0.8, 0.8, 0.8);
+
+	
+	glColor3f(0.2,0.2,0.2);
+	glBegin(GL_POLYGON);
+	glVertex2f(-3.28, 33.68);
+	glVertex2f(-3.28, 39.84);
+	glVertex2f(2.88, 39.84);
+	glVertex2f(2.88, 33.68);
+	glEnd(); //25% +- 5% // 85% +-5%
+
+	glColor3f(0.2,0.2,0.2);
+	glBegin(GL_POLYGON);
+	glVertex2f(12.12, 33.68);
+	glVertex2f(12.12, 39.84);
+	glVertex2f(18.28, 39.84);
+	glVertex2f(18.28, 33.68);
+	glEnd();//50% +- 5% // 85% +- 5%
+
+	glColor3f(0.2,0.2,0.2);
+	glBegin(GL_POLYGON);
+	glVertex2f(27.52, 33.68);
+	glVertex2f(27.52, 39.84);
+	glVertex2f(33.68, 39.84);
+	glVertex2f(33.68, 33.68);
+	glEnd();//75% +- 5%// 85% +- 5%
+
+	print_rgb(15.2, 2.88, "Enter the percentage with console",0.8,0.8,0.8);
+	glColor3f(0.2,0.2,0.2);
+	glBegin(GL_POLYGON);
+	glVertex2f(-0.2, 5.96);
+	glVertex2f(-0.2, -0.2);
+	glVertex2f(30.6, -0.2);
+	glVertex2f(30.6, 5.96);
+	glEnd(); // 50% +- 25% // 30% +- 5%
+	
+
+	print_rgb(15.2, -6.36, "Validate", 0.8,0.8,0.8);
+	glColor3f(0.2,0.2,0.2);
+	glBegin(GL_POLYGON);
+	glVertex2f(9.04, -9.44);
+	glVertex2f(9.04, -2.88);
+	glVertex2f(21.36, -2.88);
+	glVertex2f(21.36, -9.44);
+	glEnd(); // 50% +- 10% // 15% +- 5%
+
+	glColor3f(0.08,0.08,0.08);
+	glBegin(GL_POLYGON);
+	glVertex2f(-15.6, 46);
+	glVertex2f(-15.6, -15.6);
+	glVertex2f(46, -15.6);
+	glVertex2f(46, 46);
+	glEnd();
 }
 
 void draw3D()
@@ -1183,7 +1561,7 @@ void draw3D()
 	glClearColor(0,0,0,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if (NO_MORE_MEMORY)
-		printf("Foutu\n");
+		printf("A memory allocation failed, we closed the experiment\n");
 	else if (is_tutorial)
 		tutorial();
 	else {
@@ -1233,8 +1611,8 @@ void draw3D()
 			    break;
 			case 150: affich_menu_opt1(5);
 				break;
-			case 160: affich_menu_opt1(6);
-				break;
+//			case 160: affich_menu_opt1(6);
+//				break;
 		    case 200: affich_menu_opt_patch(0);
 			    break;
 		    case 210: affich_menu_opt_patch(1);
@@ -1269,6 +1647,88 @@ void draw3D()
 		    	test_options = 0;
 		    	glutPostRedisplay();
 			    break;
+			case 600: which_prob_param(0);
+				break;
+			case 610: which_prob_param(1);
+				break;
+			case 620: which_prob_param(2);
+				break;
+			case 630: which_prob_param(3);
+				break;
+			case 640: which_prob_param(4);
+				break;
+			case 650: which_prob_param(5);
+				break;
+			case 660: which_prob_param(6);
+				break;
+			case 670: which_prob_param(7);
+				break;
+			case 680: which_prob_param(8);
+				break;
+			case 601: modif_param(1);
+				break;
+			case 602: modif_param(2);
+				break;
+			case 603: modif_param(3);
+				break;
+			case 604: modif_param(4);
+				break;
+			case 605: modif_param(5);
+				break;
+			case 606: modif_param(6);
+				break;
+			case 607: modif_param(7);
+				break;
+			case 608: modif_param(8);
+				break;
+			case 609: modif_param(9);
+				break;
+			case 611: modif_param(10);
+				break;
+			case 612: modif_param(11);
+				break;
+			case 613 : modif_param(12);
+				break;
+			case 614 : modif_param(13);
+				break;
+			case 615 : modif_param(14);
+				break;
+			case 616 : modif_param(15);
+				break;
+			case 617 : modif_param(16);
+				break;
+			case 618 : modif_param(17);
+				break;
+			case 619 : modif_param(18);
+				break;
+			case 621 : modif_param(19);
+				break;
+			case 700: which_model_param(0);
+				break;
+			case 710: which_model_param(1);
+				break;
+			case 720: which_model_param(2);
+				break;
+			case 730: which_model_param(3);
+				break;
+			case 740: which_model_param(4);
+				break;
+			case 750: which_model_param(5);
+				break;
+			case 760: which_model_param(6);
+				break;
+			case 800: which_exp_param(0);
+				break;
+			case 810: which_exp_param(1);
+				break;
+			case 820: which_exp_param(2);
+				break;
+			case 830: which_exp_param(3);
+				break;
+			case 840: which_exp_param(4);
+				break;
+			case 850: which_exp_param(5);
+				break;
 		}
 	}
 

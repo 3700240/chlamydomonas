@@ -19,10 +19,10 @@ int YMIN = 1;
 int YMAX = 30;
 int ZMIN = 1;
 int ZMAX = 30;
-int NB_INIT = 200;
+int NB_INIT = 100;
 int FOOD_INIT = 15;
 float DIST_AGGREGATE = 1.0;
-int food_increase = 2;
+int food_increase = 1;
 /* The food increase amount is how much energy eating gives minus the energy depleted per "round"*/
 int food_decrease = 1;
 float size = 0.075;
@@ -40,14 +40,15 @@ float angle_right_left = 0;
 int camera_x = 0;
 int camera_y = 0;
 int camera_z = 0;
+int incrementor = 1;
 
 int prob_aggregation_between_cells = 45; 
 int prob_self_aggregating = 200;
 int dimin_prob_clonage = 16; 
 int prob_init_clonage = 100;
-int prob_eat = 200;
+int prob_eat = 501;
 int prob_change_direction = 100;
-int prob_die = 0;
+int prob_die = 1;
 int prob_disaggregation = 10;
 int prob_max = 1000;
 

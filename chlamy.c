@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "globales.h"
 #include "structures.h"
@@ -205,7 +206,7 @@ Aggregate *Take_Chlam_From_Agg(Chlamydomonas *target, Aggregate *host)
 	temp->distance_in_aggregate -= find_Distance(temp, target);
 	float distance = temp->distance_in_aggregate;
 	Chlamydomonas *center = temp;
-	while (center != NULL) {
+	while (temp != NULL) {
 		temp->distance_in_aggregate -= find_Distance(temp, target);
 		if (temp->distance_in_aggregate < distance) {
 			distance = temp->distance_in_aggregate;
@@ -227,7 +228,8 @@ void add_Chlam_To_Agg(Aggregate *target, Chlamydomonas *elem)
 			head_chlam->prev = NULL;
 	}
 	else {
-		elem->prev->next = elem->next;
+		if (elem->prev != NULL)
+			elem->prev->next = elem->next;
 		if (elem->next != NULL)
 			elem->next->prev = elem->prev;
 	}
@@ -235,6 +237,7 @@ void add_Chlam_To_Agg(Aggregate *target, Chlamydomonas *elem)
 	target->number ++;
 	target->radius /= target->number;
 	elem->next = target->head;
+	target->head->prev = elem;
 	target->head = elem;
 	elem->prev = NULL;
 }
@@ -266,6 +269,7 @@ Aggregate *disaggregation(Aggregate *target)
 	if (head_chlam != NULL)
 		head_chlam->prev = temp2;
 	head_chlam = temp;
+	free(target);
 	return next;
 }
 
@@ -469,6 +473,9 @@ Chlamydomonas *aggregation(Chlamydomonas *elem)
 {
 	if (elem == NULL)
 		return NULL;
+	int test = 0;
+	if (elem == head_chlam)
+		test = 1;
 	Chlamydomonas *next = elem->next;
 
 	if (head_aggregate != NULL) {
@@ -485,6 +492,8 @@ Chlamydomonas *aggregation(Chlamydomonas *elem)
 				elem = hunger_Chlamydomonas(elem);
 				check_Change_Dir(elem);
 				move(elem);
+				if (test)
+					head_chlam = elem;
 				return elem;
 			}
 			temp_aggreg = temp_aggreg->next;
@@ -597,10 +606,12 @@ void patch()
 		while (temp_aggreg != NULL) {
 			if (rand() % prob_max < prob_disaggregation)
 				temp_aggreg = disaggregation(temp_aggreg);
-			if (temp_aggreg != NULL) {
+			else {
 				temp_aggreg = hunger_Aggregate(temp_aggreg);
 				if (temp_aggreg != NULL)
 					mitosis_In_Aggreg(temp_aggreg);
+				if (temp_aggreg != NULL)
+					temp_aggreg = temp_aggreg->next;
 			}
 		}
 	}
@@ -652,6 +663,7 @@ void delete_World()
 {
 	destroy_Chlam(head_chlam);
 	destroy_Aggreg(head_aggregate);
+	is_initiated = 0;
 }
 
 void init_World()
@@ -659,11 +671,12 @@ void init_World()
 	head_chlam = NULL;
 	head_aggregate = NULL;
 
-
+	srand(time(NULL));
 
 	for (int i = 0; i < NB_INIT; i++) {
 		add_Chlam(create_Chlam((rand() % (XMAX - XMIN + 1) + XMIN), (rand() % (YMAX - YMIN + 1) + YMIN), (rand() % (ZMAX - ZMIN + 1) + ZMIN), FOOD_INIT));
 	}
+	is_initiated = 1;
 }
 
 //Si on passe par un des process, temp = le return de ce process
