@@ -585,7 +585,7 @@ void affich_menu_opt1(char option)
 
 	print_rgb(15.2, 40.865, "Color Chlamydomonas", 0.8, 0.8, 0.8);
     print_rgb(15.2, 30.6, "Color aggregate", 0.8, 0.8, 0.8);
-    print_rgb(15.2, 20.335, "Modify probs", 0.8, 0.8, 0.8);
+    print_rgb(15.2, 20.335, "Modify parameters", 0.8, 0.8, 0.8);
     print_rgb(15.2, 10.13, "Patches per time", 0.8, 0.8, 0.8);
     print_rgb(15.2, -0.135, "Back", 0.8, 0.8, 0.8);
 
@@ -867,7 +867,7 @@ void which_param(char option)
 	glTranslatef(-15.5,-15.5,-53);
 
 
-   	print_rgb(15.2, 40.865, "probabilities", 0.8, 0.8, 0.8);
+   	print_rgb(15.2, 40.865, "Probabilities", 0.8, 0.8, 0.8);
     print_rgb(15.2, 30.6, "Experiment size", 0.8, 0.8, 0.8);
     print_rgb(15.2, 20.335, "Experiment parameters", 0.8, 0.8, 0.8); //ADD A FACTORY RESET //ADD A BACK BUTTON
     print_rgb(15.2, 10.13, "Reset all values", 0.8, 0.8, 0.8);
@@ -1463,6 +1463,7 @@ void modif_param(int parameter)
 		case 15: //NB_INIT;
 			print_rgb(15.2, 30, "Number of Chlamydomonas to start the experiment", 0.8, 0.8, 0.8);
 			temp = NB_INIT;
+			test = 0;
 			break;
 		case 16: //FOOD_INIT;
 			print_rgb(15.2, 30, "Energy to start with", 0.8, 0.8, 0.8);
@@ -1528,7 +1529,7 @@ void modif_param(int parameter)
 	glVertex2f(33.68, 33.68);
 	glEnd();//75% +- 5%// 85% +- 5%
 
-	print_rgb(15.2, 2.88, "Enter the percentage with console",0.8,0.8,0.8);
+	print_rgb(15.2, 2.88, "Enter the value with console",0.8,0.8,0.8);
 	glColor3f(0.2,0.2,0.2);
 	glBegin(GL_POLYGON);
 	glVertex2f(-0.2, 5.96);
@@ -1640,6 +1641,8 @@ void draw3D()
 			case 430: which_param(3);
 				break;
 			case 440: which_param(4);
+				break;
+			case 450: which_param(5);
 				break;
 		    case 500: affich_credits();
 		    	temp = 0;

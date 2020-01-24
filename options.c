@@ -18,6 +18,7 @@ extern float red_aggr;
 extern float green_aggr;
 extern float blue_aggr;
 int pass = 0;
+extern int test;
 
 double tempo = 0;
 
@@ -477,6 +478,7 @@ void MouseManagement(int button, int state, int x, int y)
                                 }
                             }
                         }
+                        glutPostRedisplay();
                         break;
                     case 302:
                         if ((x - 0.5*xmax)/(0.5*min) >= -1 && (0.5*ymax - y)/(0.5*min) <= 1) {
@@ -731,6 +733,7 @@ void MouseManagement(int button, int state, int x, int y)
                                 }
                             }
                         }
+                        glutPostRedisplay();
                         break;
                     case 400:
                         if (((x - 0.5 * xmax)/(0.5 * min) > -0.9) && ((x - 0.5 * xmax)/(0.5 * min) < 0.9)) {
@@ -751,8 +754,8 @@ void MouseManagement(int button, int state, int x, int y)
                                 glutPostRedisplay();
                             }
                             else if ((0.5 * ymax - y)/(0.5*min) > -0.67) {
-                                //test_options = 450;
-                                //glutPostRedisplay();
+                                test_options = 450;
+                                glutPostRedisplay();
                             }
                             else {
                                 //test_options = 460;
@@ -1107,7 +1110,6 @@ void MouseManagement(int button, int state, int x, int y)
                             if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
                                 //Entrer avec le clavier
                                 scanf("%lf", &tempo);
-                                tempo *= 10;
                                 XMIN = (int) tempo;
                             }
                         }
@@ -1118,10 +1120,15 @@ void MouseManagement(int button, int state, int x, int y)
                                 incrementor = 1;
                             }
                         }
+                        if (is_initiated) {
+                            delete_World();
+                            is_initiated = 0;
+                        }
                         if (XMIN < 0)
                             XMIN = 0;
                         if (XMIN > XMAX)
                             XMIN = XMAX;
+                        radius_min_max();
                         glutPostRedisplay();
                         break;
                     case 611:
@@ -1145,7 +1152,6 @@ void MouseManagement(int button, int state, int x, int y)
                             if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
                                 //Entrer avec le clavier
                                 scanf("%lf", &tempo);
-                                tempo *= 10;
                                 XMAX = (int) tempo;
                             }
                         }
@@ -1156,10 +1162,15 @@ void MouseManagement(int button, int state, int x, int y)
                                 incrementor = 1;
                             }
                         }
+                        if (is_initiated) {
+                            delete_World();
+                            is_initiated = 0;
+                        }
                         if (XMAX < XMIN)
                             XMAX = XMIN;
                         if (XMAX > 100)
                             XMAX = 100;
+                        radius_min_max();
                         glutPostRedisplay();
                         break;
                     case 612:
@@ -1183,7 +1194,6 @@ void MouseManagement(int button, int state, int x, int y)
                             if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
                                 //Entrer avec le clavier
                                 scanf("%lf", &tempo);
-                                tempo *= 10;
                                 YMIN = (int) tempo;
                             }
                         }
@@ -1194,10 +1204,15 @@ void MouseManagement(int button, int state, int x, int y)
                                 incrementor = 1;
                             }
                         }
+                        if (is_initiated) {
+                            delete_World();
+                            is_initiated = 0;
+                        }
                         if (YMIN < 0)
                             YMIN = 0;
                         if (YMIN > YMAX)
                             YMIN = YMAX;
+                        radius_min_max();
                         glutPostRedisplay();
                         break;
                     case 613:
@@ -1221,7 +1236,6 @@ void MouseManagement(int button, int state, int x, int y)
                             if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
                                 //Entrer avec le clavier
                                 scanf("%lf", &tempo);
-                                tempo *= 10;
                                 YMAX = (int) tempo;
                             }
                         }
@@ -1232,10 +1246,15 @@ void MouseManagement(int button, int state, int x, int y)
                                 incrementor = 1;
                             }
                         }
+                        if (is_initiated) {
+                            delete_World();
+                            is_initiated = 0;
+                        }
                         if (YMAX < YMIN)
                             YMAX = YMIN;
                         if (YMAX > 1000)
                             YMAX = 1000;
+                        radius_min_max();
                         glutPostRedisplay();
                         break;
                     case 614:
@@ -1259,7 +1278,6 @@ void MouseManagement(int button, int state, int x, int y)
                             if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
                                 //Entrer avec le clavier
                                 scanf("%lf", &tempo);
-                                tempo *= 10;
                                 ZMIN = (int) tempo;
                             }
                         }
@@ -1270,10 +1288,15 @@ void MouseManagement(int button, int state, int x, int y)
                                 incrementor = 1;
                             }
                         }
+                        if (is_initiated) {
+                            delete_World();
+                            is_initiated = 0;
+                        }
                         if (ZMIN < 0)
                             ZMIN = 0;
                         if (ZMIN > ZMAX)
                             ZMIN = ZMAX;
+                        radius_min_max();
                         glutPostRedisplay();
                         break;
                     case 615:
@@ -1297,7 +1320,6 @@ void MouseManagement(int button, int state, int x, int y)
                             if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
                                 //Entrer avec le clavier
                                 scanf("%lf", &tempo);
-                                tempo *= 10;
                                 ZMAX = (int) tempo;
                             }
                         }
@@ -1308,10 +1330,15 @@ void MouseManagement(int button, int state, int x, int y)
                                 incrementor = 1;
                             }
                         }
+                        if (is_initiated) {
+                            delete_World();
+                            is_initiated = 0;
+                        }
                         if (ZMAX < ZMIN)
                             ZMAX = ZMIN;
                         if (ZMAX > 1000)
                             ZMAX = 1000;
+                        radius_min_max(); 
                         glutPostRedisplay();
                         break;
                     case 616:
@@ -1335,7 +1362,6 @@ void MouseManagement(int button, int state, int x, int y)
                             if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
                                 //Entrer avec le clavier
                                 scanf("%lf", &tempo);
-                                tempo *= 10;
                                 NB_INIT = (int) tempo;
                             }
                         }
@@ -1373,7 +1399,6 @@ void MouseManagement(int button, int state, int x, int y)
                             if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
                                 //Entrer avec le clavier
                                 scanf("%lf", &tempo);
-                                tempo *= 10;
                                 FOOD_INIT = (int) tempo;
                             }
                         }
@@ -1411,7 +1436,6 @@ void MouseManagement(int button, int state, int x, int y)
                             if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
                                 //Entrer avec le clavier
                                 scanf("%lf", &tempo);
-                                tempo *= 10;
                                 DIST_AGGREGATE = (int) tempo;
                             }
                         }
@@ -1449,7 +1473,6 @@ void MouseManagement(int button, int state, int x, int y)
                             if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
                                 //Entrer avec le clavier
                                 scanf("%lf", &tempo);
-                                tempo *= 10;
                                 food_increase = (int) tempo;
                             }
                         }
@@ -1487,7 +1510,6 @@ void MouseManagement(int button, int state, int x, int y)
                             if (((x - 0.5 * xmax)/(0.5 * min) > -0.5) && ((x - 0.5 * xmax)/(0.5 * min) < 0.5)) {
                                 //Entrer avec le clavier
                                 scanf("%lf", &tempo);
-                                tempo *= 10;
                                 dimin_prob_clonage = (int) tempo;
                             }
                         }
@@ -1700,7 +1722,27 @@ void MouseManagement(int button, int state, int x, int y)
                             glutPostRedisplay();
                             break;
                         case 440: if (((0.5 * ymax - y)/(0.5 * min) > -0.333) && ((0.5 * ymax - y)/(0.5 * min) <= 0)) {
-                                //FACTORY RESET;
+                                XMIN = 1;
+                                XMAX = 30;
+                                YMIN = 1;
+                                YMAX = 30;
+                                ZMIN = 1;
+                                ZMAX = 30;
+                                NB_INIT = 1000;
+                                FOOD_INIT = 15;
+                                DIST_AGGREGATE = 1.0;
+                                food_increase = 1;
+                                food_decrease = 1;
+                                patches_per_draw = 1;
+                                
+                                prob_aggregation_between_cells = 45; 
+                                prob_self_aggregating = 1;
+                                dimin_prob_clonage = 8; 
+                                prob_init_clonage = 50;
+                                prob_eat = 400;
+                                prob_change_direction = 100;
+                                prob_die = 1;
+                                prob_disaggregation = 10;
                             }
                             else test_options = 400;
                             glutPostRedisplay();

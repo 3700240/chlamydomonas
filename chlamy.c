@@ -525,6 +525,11 @@ Chlamydomonas *aggregation(Chlamydomonas *elem)
 		}
 		temp = temp->next;
 	}
+	if (rand() % prob_max < prob_self_aggregating) {
+		add_Aggreg(spawn_Aggreg(elem, elem));
+		if (test)
+			head_chlam = next;
+	}
 	return elem;
 }//Returns the first guy in the list that did NOT aggregate
 
@@ -663,6 +668,8 @@ void delete_World()
 {
 	destroy_Chlam(head_chlam);
 	destroy_Aggreg(head_aggregate);
+	head_chlam = NULL;
+	head_aggregate = NULL;
 	is_initiated = 0;
 }
 
