@@ -1559,7 +1559,7 @@ void modif_param(int parameter)
 
 void draw3D()
 {
-	glClearColor(0,0,0,1);
+	glClearColor(0.1,0.1,0.1,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	if (NO_MORE_MEMORY)
 		printf("A memory allocation failed, we closed the experiment\n");
@@ -1574,9 +1574,6 @@ void draw3D()
 			case 0: 
 				glMatrixMode(GL_MODELVIEW);
 			  	glLoadIdentity();
-
-			  	glColor3f(0.1,0.1,0.1);
-			  	glutSolidSphere(2 * radius, 10, 10);
 
 			  	gluLookAt(camera_x, camera_y, camera_z,		 0, 0, 0,	 	0, 1, 0);
 			  				//Position of our eye			Where we look 	Vertical axis
