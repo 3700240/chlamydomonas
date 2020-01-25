@@ -494,7 +494,7 @@ Chlamydomonas *aggregation(Chlamydomonas *elem)
 				move(elem);
 				if (test)
 					head_chlam = elem;
-				return elem;
+				return aggregation(elem);
 			}
 			temp_aggreg = temp_aggreg->next;
 		}
@@ -520,15 +520,27 @@ Chlamydomonas *aggregation(Chlamydomonas *elem)
 						move(elem);
 					}
 				}
-				return next;
+				return aggregation(elem);
 			}
 		}
 		temp = temp->next;
 	}
 	if (rand() % prob_max < prob_self_aggregating) {
 		add_Aggreg(spawn_Aggreg(elem, elem));
-		if (test)
-			head_chlam = next;
+		elem = next;
+		while (elem != NULL && rand() % prob_max < prob_die) {
+			next = next->next;
+			kill_Chlam(elem);
+			elem = next;
+		}
+		if (elem != NULL) {
+			elem = hunger_Chlamydomonas(elem);
+			if (elem != NULL) {
+				check_Change_Dir(elem);
+				move(elem);
+			}
+		}
+		return aggregation(elem);
 	}
 	return elem;
 }//Returns the first guy in the list that did NOT aggregate
@@ -597,9 +609,13 @@ Aggregate *hunger_Aggregate(Aggregate *elem)
 			temp->food += food_increase;
 		else
 			temp->food -= food_decrease;
-		if (temp->food <= 0)
+		if (temp->food <= 0) {
+			Chlamydomonas *temp2 = temp->next;
 			Take_Chlam_From_Agg(temp,elem);
-		temp = temp->next;
+			temp = temp2;
+		}
+		else if (temp != NULL)
+			temp = temp->next;
 	}
 	return elem;
 }//Returns the last guy whose components experienced hunger

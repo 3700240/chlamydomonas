@@ -895,8 +895,8 @@ void MouseManagement(int button, int state, int x, int y)
                         }
                         if (dimin_prob_clonage < 0)
                             dimin_prob_clonage = 0;
-                        if (dimin_prob_clonage > 1000)
-                            dimin_prob_clonage = 1000;
+                        if (dimin_prob_clonage > prob_init_clonage)
+                            dimin_prob_clonage = prob_init_clonage;
                         glutPostRedisplay();
                         break;
                     case 604:
@@ -1129,6 +1129,7 @@ void MouseManagement(int button, int state, int x, int y)
                         if (XMIN > XMAX)
                             XMIN = XMAX;
                         radius_min_max();
+                        camera_z = radius;
                         glutPostRedisplay();
                         break;
                     case 611:
@@ -1171,6 +1172,7 @@ void MouseManagement(int button, int state, int x, int y)
                         if (XMAX > 100)
                             XMAX = 100;
                         radius_min_max();
+                        camera_z = radius;
                         glutPostRedisplay();
                         break;
                     case 612:
@@ -1213,6 +1215,7 @@ void MouseManagement(int button, int state, int x, int y)
                         if (YMIN > YMAX)
                             YMIN = YMAX;
                         radius_min_max();
+                        camera_z = radius;
                         glutPostRedisplay();
                         break;
                     case 613:
@@ -1255,6 +1258,7 @@ void MouseManagement(int button, int state, int x, int y)
                         if (YMAX > 1000)
                             YMAX = 1000;
                         radius_min_max();
+                        camera_z = radius;
                         glutPostRedisplay();
                         break;
                     case 614:
@@ -1297,6 +1301,7 @@ void MouseManagement(int button, int state, int x, int y)
                         if (ZMIN > ZMAX)
                             ZMIN = ZMAX;
                         radius_min_max();
+                        camera_z = radius;
                         glutPostRedisplay();
                         break;
                     case 615:
@@ -1339,6 +1344,7 @@ void MouseManagement(int button, int state, int x, int y)
                         if (ZMAX > 1000)
                             ZMAX = 1000;
                         radius_min_max(); 
+                        camera_z = radius;
                         glutPostRedisplay();
                         break;
                     case 616:
@@ -1743,6 +1749,8 @@ void MouseManagement(int button, int state, int x, int y)
                                 prob_change_direction = 100;
                                 prob_die = 1;
                                 prob_disaggregation = 10;
+
+                                test_options = 1;
                             }
                             else test_options = 400;
                             glutPostRedisplay();

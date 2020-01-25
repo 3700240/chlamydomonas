@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 
-        gluPerspective(60, 1, 1, 2 * radius);
+        gluPerspective(60, 1, 1, 4 * radius);
         glViewport(0, 0, WIDTH, HEIGHT);
 
         glEnable(GL_DEPTH_TEST);
